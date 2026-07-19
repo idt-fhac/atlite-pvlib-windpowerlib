@@ -1,0 +1,5 @@
+Scale,Subset,Observed_GWh,WPL_Ratio_%,Atlite_Ratio_%,WPL_Corr,Atlite_Corr,Stack
+Kelmarsh (farm),Day,16.06,124.3,126.6,0.8794,0.9048,SCADA / farm weather
+Kelmarsh (farm),Night,15.43,89.8,135.1,0.8977,0.8992,SCADA / farm weather
+Germany national,Day,56860.9,140.3,129.1,0.9729,0.9722,matched ERA5 cutout
+Germany national,Night,61070.4,141.6,126.3,0.9802,0.9761,matched ERA5 cutout

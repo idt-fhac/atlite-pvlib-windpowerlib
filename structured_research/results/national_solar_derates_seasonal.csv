@@ -1,0 +1,21 @@
+Season,Model,Ratio_%,Corr
+DJF,PVLib MaStR × η_inv × aging,227.9,0.838
+DJF,Atlite × aging,230.4,0.8956
+DJF,PVLib MaStR raw,262.2,0.838
+DJF,Atlite raw,238.6,0.8956
+MAM,PVLib MaStR × η_inv × aging,164.9,0.9383
+MAM,Atlite × aging,159.9,0.9404
+MAM,PVLib MaStR raw,189.8,0.9383
+MAM,Atlite raw,165.6,0.9404
+JJA,PVLib MaStR × η_inv × aging,146.5,0.9568
+JJA,Atlite × aging,141.2,0.9507
+JJA,PVLib MaStR raw,168.6,0.9568
+JJA,Atlite raw,146.2,0.9507
+SON,PVLib MaStR × η_inv × aging,158.6,0.9107
+SON,Atlite × aging,158.3,0.932
+SON,PVLib MaStR raw,182.5,0.9107
+SON,Atlite raw,164.0,0.932
+FULL,PVLib MaStR × η_inv × aging,160.5,0.9346
+FULL,Atlite × aging,156.9,0.9396
+FULL,PVLib MaStR raw,184.7,0.9346
+FULL,Atlite raw,162.5,0.9396

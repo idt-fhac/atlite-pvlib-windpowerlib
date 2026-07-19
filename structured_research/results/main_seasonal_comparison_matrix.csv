@@ -1,0 +1,21 @@
+Scale,Site,Technology,Season,Actual_ref,PVLib_or_WPL_Ratio_%,PVLib_or_WPL_Corr,Atlite_Ratio_%,Atlite_Corr,Closer_yield,Higher_corr,Explanation
+Single,Juelich_PV,Solar,Winter (DJF),Measured AC,110.5,0.8343,114.64,0.8582,PVLib,Atlite,Libraries agree closely on energy. Atlite higher r.
+Single,Juelich_PV,Solar,Spring (MAM),Measured AC,116.76,0.9131,112.3,0.915,Atlite,Atlite,Libraries agree closely on energy. Atlite higher r.
+Single,Juelich_PV,Solar,Summer (JJA),Measured AC,117.26,0.9165,108.43,0.9181,Atlite,Atlite,Atlite closer on energy. Atlite higher r.
+Single,Juelich_PV,Solar,Autumn (SON),Measured AC,110.15,0.9284,106.12,0.9378,Atlite,Atlite,Libraries agree closely on energy. Atlite higher r.
+Single,Juelich_PV,Solar,Full Year,Measured AC,115.0,0.9165,109.76,0.9213,Atlite,Atlite,Atlite closer on energy. Atlite higher r.
+Single,Kelmarsh_Wind,Wind,Winter (DJF),SCADA,98.07,0.9024,123.63,0.9157,Windpowerlib,Atlite,Kelmarsh is a UK SCADA check; not a German roughness calibration. Windpowerlib closer on energy. Atlite higher r.
+Single,Kelmarsh_Wind,Wind,Spring (MAM),SCADA,106.44,0.9104,123.35,0.9108,Windpowerlib,Atlite,Kelmarsh is a UK SCADA check; not a German roughness calibration. Windpowerlib closer on energy. Atlite higher r.
+Single,Kelmarsh_Wind,Wind,Summer (JJA),SCADA,135.3,0.7932,148.72,0.8269,Windpowerlib,Atlite,Kelmarsh is a UK SCADA check; not a German roughness calibration. Windpowerlib closer on energy. Atlite higher r.
+Single,Kelmarsh_Wind,Wind,Autumn (SON),SCADA,102.54,0.875,135.77,0.8968,Windpowerlib,Atlite,Kelmarsh is a UK SCADA check; not a German roughness calibration. Windpowerlib closer on energy. Atlite higher r.
+Single,Kelmarsh_Wind,Wind,Full Year,SCADA,107.4,0.877,130.78,0.9016,Windpowerlib,Atlite,Kelmarsh is a UK SCADA check; not a German roughness calibration. Windpowerlib closer on energy. Atlite higher r.
+National,Germany,Solar,Full Year,ENTSO-E feed-in,184.74,0.9346,162.5,0.9396,Atlite,Atlite,High vs ENTSO-E feed-in (generation ≠ feed-in; BTM/timing residual). Atlite closer on energy. Atlite higher r.
+National,Germany,Wind,Full Year,ENTSO-E feed-in,141.02,0.9763,127.66,0.9738,Atlite,Windpowerlib,Atlite closer on energy (fleet proxy vs MaStR fleet — not library-only). WPL higher or equal r.
+TSO,50Hertz,Solar,Full Year,ENTSO-E feed-in,166.31,0.9366,145.22,0.9384,Atlite,Atlite,High vs ENTSO-E feed-in (generation ≠ feed-in; BTM/timing residual). Atlite closer on energy. Atlite higher r.
+TSO,50Hertz,Wind,Full Year,ENTSO-E feed-in,138.58,0.9766,124.49,0.9726,Atlite,Windpowerlib,Atlite closer on energy (fleet proxy vs MaStR fleet — not library-only). WPL higher or equal r.
+TSO,Amprion,Solar,Full Year,ENTSO-E feed-in,158.58,0.9184,144.22,0.9254,Atlite,Atlite,High vs ENTSO-E feed-in (generation ≠ feed-in; BTM/timing residual). Atlite closer on energy. Atlite higher r.
+TSO,Amprion,Wind,Full Year,ENTSO-E feed-in,130.66,0.9651,112.42,0.9589,Atlite,Windpowerlib,Atlite closer on energy (fleet proxy vs MaStR fleet — not library-only). WPL higher or equal r.
+TSO,TenneT,Solar,Full Year,ENTSO-E feed-in,215.53,0.9292,187.04,0.9362,Atlite,Atlite,High vs ENTSO-E feed-in (generation ≠ feed-in; BTM/timing residual). Atlite closer on energy. Atlite higher r.
+TSO,TenneT,Wind,Full Year,ENTSO-E feed-in,150.23,0.9691,141.79,0.967,Atlite,Windpowerlib,Atlite closer on energy (fleet proxy vs MaStR fleet — not library-only). WPL higher or equal r.
+TSO,TransnetBW,Solar,Full Year,ENTSO-E feed-in,179.06,0.9084,159.03,0.9156,Atlite,Atlite,High vs ENTSO-E feed-in (generation ≠ feed-in; BTM/timing residual). Atlite closer on energy. Atlite higher r.
+TSO,TransnetBW,Wind,Full Year,ENTSO-E feed-in,117.7,0.9542,82.06,0.926,Windpowerlib,Windpowerlib,Windpowerlib closer on energy. WPL higher or equal r.
