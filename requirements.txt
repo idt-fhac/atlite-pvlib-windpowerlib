@@ -1,0 +1,26 @@
+# Core conversion libraries
+atlite==0.6.1
+pvlib==0.15.2
+windpowerlib @ git+https://github.com/wind-python/windpowerlib.git@895db462ad318a4a551b75a415ae2a6ca384d1bd
+
+# Scientific stack
+numpy>=2.0
+pandas>=2.2
+xarray>=2024.1
+scipy>=1.11
+matplotlib>=3.8
+geopandas>=1.0
+shapely>=2.0
+pyproj>=3.6
+pyogrio>=0.9
+rasterio>=1.3
+netCDF4>=1.6
+h5netcdf>=1.3
+dask>=2024.1
+progressbar2>=4.0
+PyYAML>=6.0
+requests>=2.31
+SQLAlchemy>=2.0
+
+# ERA5 cutout download (prepare_cutouts.py)
+cdsapi>=0.7

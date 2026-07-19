@@ -1,0 +1,61 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Secrets / local config
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials*.json
+secrets/
+.cdsapirc
+.cdsapi
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*~
+*.swp
+.idea/
+.vscode/
+
+# Logs
+*.log
+
+# Large regenerable inputs (rebuild via prepare_cutouts / extract_research_data)
+structured_research/cutouts/*.nc
+structured_research/data/*.parquet
+!structured_research/cutouts/README.md
+!structured_research/data/README.md
+!structured_research/cutouts/.gitkeep
+!structured_research/data/.gitkeep
+
+# Raw external measurement archives
+*.zip
+Kelmarsh_SCADA*
+eview-solargeneration*
+
+# Regenerable figures (keep summary CSV/MD tables under results/)
+structured_research/results/*.png
+structured_research/results/*.pdf
+structured_research/results/*.svg
+
+# Misc
+*.tmp
+*.bak
+.cache/
+tmp/
+temp/
