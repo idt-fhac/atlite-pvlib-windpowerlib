@@ -1,0 +1,16 @@
+Scale,Site,Technology,Model,Season,SeasonCode,Ratio_%,Correlation,MAE,RMSE,Sim_Sum,Act_Sum,n
+Single,Juelich_PV,Solar,"PVLib (ERA5, standard×η_inv×aging)",Winter (DJF),DJF,110.5,0.8343,5.297,12.484,20392.733,18454.217,2159
+Single,Juelich_PV,Solar,"PVLib (ERA5, standard×η_inv×aging)",Spring (MAM),MAM,116.76,0.9131,9.879,19.774,71634.169,61353.35,2208
+Single,Juelich_PV,Solar,"PVLib (ERA5, standard×η_inv×aging)",Summer (JJA),JJA,117.26,0.9165,11.381,21.374,88595.601,75556.383,2208
+Single,Juelich_PV,Solar,"PVLib (ERA5, standard×η_inv×aging)",Autumn (SON),SON,110.15,0.9284,6.731,13.551,44160.405,40092.708,2184
+Single,Juelich_PV,Solar,"PVLib (ERA5, standard×η_inv×aging)",Full Year,FULL,115.0,0.9165,8.343,17.261,224782.908,195456.658,8759
+Single,Juelich_PV,Solar,"PVLib (ERA5, SAPM×η_inv×aging)",Winter (DJF),DJF,114.94,0.8323,5.399,12.723,21211.078,18454.217,2159
+Single,Juelich_PV,Solar,"PVLib (ERA5, SAPM×η_inv×aging)",Spring (MAM),MAM,115.18,0.9152,9.289,18.702,70667.878,61353.35,2208
+Single,Juelich_PV,Solar,"PVLib (ERA5, SAPM×η_inv×aging)",Summer (JJA),JJA,111.04,0.9185,9.845,18.91,83896.847,75556.383,2208
+Single,Juelich_PV,Solar,"PVLib (ERA5, SAPM×η_inv×aging)",Autumn (SON),SON,107.14,0.9286,6.194,12.793,42954.235,40092.708,2184
+Single,Juelich_PV,Solar,"PVLib (ERA5, SAPM×η_inv×aging)",Full Year,FULL,111.91,0.9177,7.699,16.094,218730.038,195456.658,8759
+Single,Juelich_PV,Solar,"Atlite (ERA5, CSi×aging)",Winter (DJF),DJF,114.64,0.8582,4.84,11.737,21156.038,18454.217,2159
+Single,Juelich_PV,Solar,"Atlite (ERA5, CSi×aging)",Spring (MAM),MAM,112.3,0.915,8.906,18.104,68899.943,61353.35,2208
+Single,Juelich_PV,Solar,"Atlite (ERA5, CSi×aging)",Summer (JJA),JJA,108.43,0.9181,9.479,18.446,81923.172,75556.383,2208
+Single,Juelich_PV,Solar,"Atlite (ERA5, CSi×aging)",Autumn (SON),SON,106.12,0.9378,5.503,11.824,42547.326,40092.708,2184
+Single,Juelich_PV,Solar,"Atlite (ERA5, CSi×aging)",Full Year,FULL,109.76,0.9213,7.199,15.401,214526.479,195456.658,8759

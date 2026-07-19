@@ -1,0 +1,7 @@
+Model,Window,Ratio_%,Corr,MAE_kW,RMSE_kW,n
+PVLib SAPM × η_inv × aging,Full_8760_gaps0,111.92,0.9177,7.7,16.095,8760
+PVLib SAPM × η_inv × aging,Overlap_hours,109.15,0.8941,13.796,20.47,4497
+PVLib SAPM × η_inv × aging,Daytime_overlap_07-17_act>1,108.86,0.865,16.502,22.857,3505
+Atlite × aging,Full_8760_gaps0,109.77,0.9213,7.201,15.402,8760
+Atlite × aging,Overlap_hours,107.26,0.8993,12.937,19.518,4497
+Atlite × aging,Daytime_overlap_07-17_act>1,107.33,0.8713,15.451,21.786,3505

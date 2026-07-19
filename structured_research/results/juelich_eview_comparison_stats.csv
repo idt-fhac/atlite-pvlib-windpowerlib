@@ -1,0 +1,22 @@
+Metric,Value
+Actual Total (kWh),195456.65833333338
+PVLib standard×η_inv×aging Total (kWh),224782.90827171595
+PVLib SAPM×η_inv×aging Total (kWh),218730.0382814667
+Atlite×aging Total (kWh),214526.47922128733
+PVLib standard×η Correlation,0.9165107044334346
+PVLib SAPM×η Correlation,0.9176734620804448
+Atlite×aging Correlation,0.9213408220183792
+PVLib standard×η MAE (kW),8.34339084198483
+PVLib SAPM×η MAE (kW),7.698721428944354
+Atlite×aging MAE (kW),7.199365846957754
+PVLib standard×η RMSE (kW),17.26067541231402
+PVLib SAPM×η RMSE (kW),16.094345737039575
+Atlite×aging RMSE (kW),15.401468491605938
+PVLib SAPM×η / Atlite×aging Ratio_%,101.96016703042955
+PVLib SAPM×η / Atlite×aging Corr,0.9964180867031749
+Inverter_efficiency_PVLib,0.9
+Aging_factor,0.94
+Age_years_mid2023,12.0
+Commission_date,2011-07-01
+Degradation_rate_per_year,0.005
+PVLib_total_factor,0.846
