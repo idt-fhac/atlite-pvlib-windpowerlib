@@ -1,0 +1,16 @@
+Scale,Technology,Numerator,Denominator,Ratio_%,Correlation,MAE_MW,RMSE_MW,Num_GWh,Den_GWh
+Germany national,Wind,Windpowerlib MaStR fleet (ERA5 cutout),Atlite (ERA5 cutout),110.47,0.9974,1813.2,2132.0,166302.6,150547.4
+Germany national,Solar,PVLib 30/180 (ERA5 cutout),Atlite (ERA5 cutout),116.81,0.997,1846.9,3240.8,104799.6,89720.8
+Germany national,Solar,PVLib MaStR orient (ERA5 cutout),Atlite (ERA5 cutout),113.68,0.9966,1522.0,2553.7,101999.0,89720.8
+DE_50HZ,Wind,Windpowerlib MaStR fleet (ERA5 cutout),Atlite (ERA5 cutout),111.32,0.9965,632.0,771.4,52836.2,47461.9
+DE_50HZ,Solar,PVLib 30/180 (ERA5 cutout),Atlite (ERA5 cutout),117.08,0.9966,461.1,825.7,25565.5,21836.7
+DE_50HZ,Solar,PVLib MaStR orient (ERA5 cutout),Atlite (ERA5 cutout),114.52,0.9967,391.9,679.2,25007.6,21836.7
+DE_AMPRION,Wind,Windpowerlib MaStR fleet (ERA5 cutout),Atlite (ERA5 cutout),116.23,0.993,562.9,677.3,34307.3,29517.6
+DE_AMPRION,Solar,PVLib 30/180 (ERA5 cutout),Atlite (ERA5 cutout),113.73,0.9962,309.6,562.6,19743.7,17360.7
+DE_AMPRION,Solar,PVLib MaStR orient (ERA5 cutout),Atlite (ERA5 cutout),109.95,0.9955,236.8,415.6,19088.8,17360.7
+DE_TENNET,Wind,Windpowerlib MaStR fleet (ERA5 cutout),Atlite (ERA5 cutout),105.95,0.9983,504.7,631.4,74511.8,70327.8
+DE_TENNET,Solar,PVLib 30/180 (ERA5 cutout),Atlite (ERA5 cutout),118.13,0.9966,855.2,1508.4,45565.8,38571.1
+DE_TENNET,Solar,PVLib MaStR orient (ERA5 cutout),Atlite (ERA5 cutout),115.23,0.9961,724.7,1229.6,44444.4,38571.1
+DE_TRANSNET,Wind,Windpowerlib MaStR fleet (ERA5 cutout),Atlite (ERA5 cutout),143.43,0.9748,160.6,205.6,4647.4,3240.1
+DE_TRANSNET,Solar,PVLib 30/180 (ERA5 cutout),Atlite (ERA5 cutout),116.5,0.9956,249.0,447.0,13924.6,11952.4
+DE_TRANSNET,Solar,PVLib MaStR orient (ERA5 cutout),Atlite (ERA5 cutout),112.6,0.995,196.5,339.9,13458.1,11952.4
