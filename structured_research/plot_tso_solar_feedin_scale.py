@@ -4,7 +4,7 @@ TSO solar: physics derates + illustrative feed-in scale vs ENTSO-E.
 Prefers matched_era5_tso_timeseries.parquet (paper path). Falls back to
 annual_seasonal_tso_timeseries.parquet only if the matched file is missing.
 
-Outputs → results/ (+ copies PNGs to text/data/):
+Outputs → results/ (+ copies PNGs to latex/data/):
   tso_solar_feedin_scale_metrics.csv
   tso_solar_two_weeks.png
   tso_solar_hourly_duration.png

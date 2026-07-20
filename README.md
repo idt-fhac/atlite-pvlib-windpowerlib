@@ -8,12 +8,14 @@ Repository: <https://github.com/idt-fhac/atlite-pvlib-windpowerlib>
 
 ```text
 run_all.py                 # paper-path orchestrator
+latex/                     # Elsevier elsarticle manuscript for Renewable Energy + figure data/
 structured_research/
   PAPER_CONTRACT.md        # which script owns which paper claim
   lib/                     # shared constants, CF interp, figure helpers
   validate_*.py            # plant / national studies
   investigate_*.py
   plot_*.py
+  explore/                 # non-paper diagnostics (not cited in manuscript)
   prepare_cutouts.py       # ERA5 cutouts via CDS (online)
   extract_research_data.py # MaStR / ENTSO-E / weather caches (online)
   data/                    # parquet caches (gitignored; regenerate)

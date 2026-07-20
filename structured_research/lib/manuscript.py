@@ -1,4 +1,4 @@
-"""Copy result artifacts into text/data/ for the manuscript."""
+"""Copy result artifacts into latex/data/ for the manuscript."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from pathlib import Path
 
 from utils import PAPER_ROOT
 
-TEXT_DATA = PAPER_ROOT / "text" / "data"
+TEXT_DATA = PAPER_ROOT / "latex" / "data"
 
 
 def copy_to_manuscript(src: str | Path) -> Path:

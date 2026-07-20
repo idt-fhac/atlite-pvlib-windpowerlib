@@ -1,0 +1,97 @@
+%% Elsevier elsarticle template for Renewable Energy (ISSN 0960-1481).
+%% Guide for authors:
+%%   https://www.sciencedirect.com/journal/renewable-energy/publish/guide-for-authors
+%% LaTeX instructions:
+%%   https://www.elsevier.com/researcher/author/policies-and-guidelines/latex-instructions
+%%
+%% Compile with: pdflatex -> bibtex -> pdflatex -> pdflatex
+\documentclass[preprint,12pt,number]{elsarticle}
+
+\usepackage{amssymb,amsmath}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{lineno}
+\usepackage{array}
+\modulolinenumbers[5]
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+
+\journal{Renewable Energy}
+
+\begin{document}
+\linenumbers
+
+\begin{frontmatter}
+
+\title{Title of your paper}
+
+\author[inst1]{First Author\corref{cor1}}
+\ead{author@example.com}
+\author[inst1]{Second Author}
+\author[inst2]{Third Author}
+
+\cortext[cor1]{Corresponding author}
+
+\affiliation[inst1]{organization={Department / Institute, University},
+            addressline={Street address},
+            city={City},
+            postcode={Postcode},
+            country={Country}}
+
+\affiliation[inst2]{organization={Second affiliation},
+            city={City},
+            country={Country}}
+
+\begin{abstract}
+A concise abstract (typically up to about 250 words) summarizing background, methods, main results, and conclusions. Do not cite references in the abstract unless necessary.
+\end{abstract}
+
+\begin{highlights}
+\item First highlight (max.\ 85 characters including spaces).
+\item Second highlight (max.\ 85 characters including spaces).
+\item Third highlight (max.\ 85 characters including spaces).
+\end{highlights}
+
+\begin{keyword}
+keyword1 \sep keyword2 \sep keyword3 \sep keyword4 \sep keyword5 \sep keyword6
+\end{keyword}
+
+\end{frontmatter}
+
+\section{Introduction}
+Place the study in context and state the research question.
+
+\section{Material and methods}
+Describe data, models, and analysis clearly enough for reproducibility.
+
+\section{Results}
+Present the main findings with tables and figures as needed.
+
+\section{Discussion}
+Interpret the results and relate them to prior work.
+
+\section{Conclusions}
+State the main conclusions and limitations briefly.
+
+\section*{CRediT authorship contribution statement}
+Conceptualization, X.X.; methodology, X.X.; \ldots{} All authors have read and agreed to the published version of the manuscript.
+
+\section*{Funding}
+This research received no external funding. %% or list grant details
+
+\section*{Declaration of competing interest}
+The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
+
+\section*{Data availability}
+State where code and data can be obtained, or that no new data were created.
+
+\appendix
+\section{Supplementary detail}
+Optional appendix material.
+
+\bibliographystyle{elsarticle-num}
+\bibliography{references}
+
+\end{document}

@@ -78,7 +78,7 @@ def svg_to_pdf(svg_path: Path, pdf_path: Path) -> None:
 
 def save_vector_figure(fig, stem: str, *, also_png: bool = False) -> Path:
     """
-    Save figure as SVG, convert to PDF, copy both into text/data/.
+    Save figure as SVG, convert to PDF, copy both into latex/data/.
     Returns the manuscript PDF path.
     """
     ensure_results_dir()
@@ -102,7 +102,7 @@ def save_vector_figure(fig, stem: str, *, also_png: bool = False) -> Path:
 
 
 def save_raster_figure(fig, stem: str, *, dpi: int = 150) -> Path:
-    """Save scatter (etc.) as PNG and copy to text/data/."""
+    """Save scatter (etc.) as PNG and copy to latex/data/."""
     ensure_results_dir()
     png = Path(result_path(f"{stem}.png"))
     fig.savefig(png, dpi=dpi, bbox_inches="tight")

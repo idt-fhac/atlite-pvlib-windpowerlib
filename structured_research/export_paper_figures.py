@@ -12,7 +12,7 @@ Paper includes PDFs for vector figures and PNGs for scatters.
     cd paper
     OFFLINE_MODE=1 .venv/bin/python structured_research/export_paper_figures.py
 
-Copies land in text/data/ (and structured_research/results/).
+Copies land in latex/data/ (and structured_research/results/).
 """
 
 from __future__ import annotations
@@ -410,7 +410,7 @@ def main() -> None:
     plot_seasonal_summary()
     plot_national_solar_duration_and_scatters()
 
-    # Ensure any pre-existing scatter PNGs from pipeline are still in text/data
+    # Ensure any pre-existing scatter PNGs from pipeline are still in latex/data
     for stem in PAPER_RASTER_STEMS:
         png = Path(result_path(f"{stem}.png"))
         if png.exists():

@@ -19,7 +19,7 @@ Weather for all paper claims: shared ERA5 cutout (`cutouts/germany_2023.nc` / J�
 
 ## Claim map
 
-| Paper claim | Script | Primary artifact(s) | → `text/data/` |
+| Paper claim | Script | Primary artifact(s) | → `latex/data/` |
 |---|---|---|---|
 | Jülich PV vs meter (tables, duration, scatter, 2-week) | `validate_juelich_solar.py` | `juelich_*` | yes |
 | Kelmarsh wind SCADA check | `validate_kelmarsh_wind.py` | `kelmarsh_*` | optional |
@@ -33,8 +33,19 @@ Weather for all paper claims: shared ERA5 cutout (`cutouts/germany_2023.nc` / J�
 ## Orchestration
 
 ```bash
-python run_all.py --offline          # cache / results already present
+cd paper
+python run_all.py --offline          # paper path only
 python run_all.py --step validate_matched_era5
 ```
 
-Paper stages (in order): alignment → (cutouts) → (extract) → Jülich → Kelmarsh → matched ERA5 → national solar derates → TSO solar plots → week/diurnal → report → export figures.
+Paper stages (in order): alignment → (cutouts) → (extract) → Jülich → Kelmarsh → matched ERA5 → national solar derates → TSO solar plots → week/diurnal → report.
+
+## Out of scope for paper numbers (`explore/`)
+
+- ECMWF / OEDS weather stacks and January TSO/national smokes
+- Four SP-class Windpowerlib aggregation
+- Night-wind / shear / overestimate one-offs
+- Jülich Kimber soiling (`investigate_juelich_soiling.py`) — qualitative mention in paper only
+- Matched V80 investigation notes (superseded by V112 + MaStR fleet)
+
+Run those manually from `explore/` if needed; they are not in `run_all.py`.

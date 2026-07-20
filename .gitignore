@@ -59,3 +59,13 @@ structured_research/results/*.svg
 .cache/
 tmp/
 temp/
+
+# LaTeX build artifacts
+latex/*.aux
+latex/*.bbl
+latex/*.blg
+latex/*.log
+latex/*.out
+latex/*.spl
+latex/*.synctex.gz
+latex/paper.pdf

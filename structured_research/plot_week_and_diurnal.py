@@ -10,7 +10,7 @@ Outputs (structured_research/results/):
   week_national_wind.png    — DE: ENTSO-E / OEDS / Atlite
   week_national_solar.png   — DE: ENTSO-E / OEDS / Atlite
 
-Also copies PNGs to text/data/ for optional manuscript inclusion later.
+Also copies PNGs to latex/data/ for optional manuscript inclusion later.
 """
 
 from __future__ import annotations
@@ -74,7 +74,7 @@ def build_diurnal_table() -> pd.DataFrame:
             "Atlite_Ratio_%": round(ma["ratio"], 1),
             "WPL_Corr": round(mw["corr"], 4),
             "Atlite_Corr": round(ma["corr"], 4),
-            "Stack": "SCADA / farm weather",
+            "Stack": "SCADA / ERA5 100m Hellman",
         })
 
     # Prefer matched ERA5 national timeseries (paper path)
@@ -140,7 +140,7 @@ def build_week_plots():
     plot_week(
         {
             "SCADA (actual)": k["actual"] / 1e3,  # kW -> MW
-            "Windpowerlib (ECMWF)": k["windpowerlib"] / 1e3,
+            "Windpowerlib (ERA5 100m)": k["windpowerlib"] / 1e3,
             "Atlite (ERA5)": k["atlite"] / 1e3,
         },
         *WEEK_WIND,
@@ -149,12 +149,12 @@ def build_week_plots():
         save_path=(out / "week_single_wind.png"),
     )
 
-    # 2) Single solar — Jülich (PVLib temp-corrected)
+    # 2) Single solar — Jülich (PVLib temp-corrected on matched ERA5)
     j = pd.read_csv(result_path("juelich_eview_comparison_complete.csv"), index_col=0, parse_dates=True)
     plot_week(
         {
             "Measured AC": j["actual_generation"],
-            "PVLib+SAPM (ECMWF)": j["oeds_temp_corrected"],
+            "PVLib+SAPM (ERA5)": j["oeds_temp_corrected"],
             "Atlite (ERA5)": j["atlite_sim"],
         },
         *WEEK_SOLAR,
@@ -163,12 +163,17 @@ def build_week_plots():
         save_path=(out / "week_single_solar.png"),
     )
 
-    # 3–4) National
-    n = pd.read_csv(result_path("annual_seasonal_timeseries.csv"), index_col=0, parse_dates=True)
+    # 3–4) National (matched ERA5 paper path)
+    matched = Path(result_path("matched_era5_timeseries.csv"))
+    if not matched.exists():
+        raise FileNotFoundError(
+            f"Missing {matched} — run validate_matched_era5 before plot_weeks."
+        )
+    n = pd.read_csv(matched, index_col=0, parse_dates=True)
     plot_week(
         {
             "ENTSO-E feed-in": n["entsoe_wind"],
-            "Windpowerlib/OEDS (ECMWF)": n["oeds_wind"],
+            "Windpowerlib MaStR (ERA5)": n["wpl_wind"],
             "Atlite (ERA5)": n["atlite_wind"],
         },
         *WEEK_WIND,
@@ -179,7 +184,7 @@ def build_week_plots():
     plot_week(
         {
             "ENTSO-E feed-in": n["entsoe_solar"],
-            "PVLib/OEDS (ECMWF)": n["oeds_solar"],
+            "PVLib MaStR (ERA5)": n["pvlib_mastr_solar"],
             "Atlite (ERA5)": n["atlite_solar"],
         },
         *WEEK_SOLAR,
@@ -188,8 +193,8 @@ def build_week_plots():
         save_path=(out / "week_national_solar.png"),
     )
 
-    # 5–6) TSO (TenneT)
-    tso_path = result_path("annual_seasonal_tso_timeseries.parquet")
+    # 5–6) TSO (TenneT) on matched ERA5
+    tso_path = Path(result_path("matched_era5_tso_timeseries.parquet"))
     if not tso_path.exists():
         print(f"WARNING: skipping TSO week plots — missing {tso_path}")
         return
@@ -201,7 +206,7 @@ def build_week_plots():
     plot_week(
         {
             "ENTSO-E feed-in": tso[f"entsoe_wind_{z}"],
-            "Windpowerlib/OEDS (ECMWF)": tso[f"oeds_wind_{z}"],
+            "Windpowerlib MaStR (ERA5)": tso[f"wpl_wind_{z}"],
             "Atlite (ERA5)": tso[f"atlite_wind_{z}"],
         },
         *WEEK_WIND,
@@ -212,7 +217,7 @@ def build_week_plots():
     plot_week(
         {
             "ENTSO-E feed-in": tso[f"entsoe_solar_{z}"],
-            "PVLib/OEDS (ECMWF)": tso[f"oeds_solar_{z}"],
+            "PVLib MaStR (ERA5)": tso[f"pvlib_mastr_solar_{z}"],
             "Atlite (ERA5)": tso[f"atlite_solar_{z}"],
         },
         *WEEK_SOLAR,

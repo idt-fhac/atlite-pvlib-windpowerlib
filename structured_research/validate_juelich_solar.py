@@ -8,7 +8,7 @@ Derates applied after conversion:
   - Module aging from commission date (both libraries), 0.5 %/y linear.
   - Inverter efficiency 0.90 on PVLib only (Atlite CSi already includes η_inv=0.9).
 
-Outputs → structured_research/results/ (and copies key PNGs to text/data/):
+Outputs → structured_research/results/ (and copies key PNGs to latex/data/):
   juelich_eview_comparison_complete.csv
   juelich_eview_comparison_stats.csv
   juelich_seasonal_comparison.csv
@@ -396,7 +396,7 @@ def main():
     print("Weather source: ERA5 cutout juelich_2023.nc (ssrd) for BOTH PVLib and Atlite")
     print(
         f"Derates: aging η={eta_age:.4f} "
-        f"(commission {COMMISSION_DATE}, age={age_y:.2f} y @ {100*DEGRADATION_RATE_PER_YEAR:.1f}%/y); "
+        f"(commission {COMMISSION_DATE}, age={age_y:.2f} y @ {100*AGING_RATE_PER_YEAR:.1f}%/y); "
         f"PVLib inverter η={INVERTER_EFFICIENCY:.2f} (Atlite CSi already includes 0.90)"
     )
 
@@ -516,7 +516,7 @@ def main():
                 eta_age,
                 age_y,
                 str(COMMISSION_DATE),
-                DEGRADATION_RATE_PER_YEAR,
+                AGING_RATE_PER_YEAR,
                 pv_factor,
             ],
         }
