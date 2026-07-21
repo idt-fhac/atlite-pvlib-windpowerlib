@@ -67,5 +67,7 @@ latex/*.blg
 latex/*.log
 latex/*.out
 latex/*.spl
+latex/*.fdb_latexmk
+latex/*.fls
 latex/*.synctex.gz
 latex/paper.pdf
