@@ -1,0 +1,4 @@
+Configuration,Ratio_%,Corr,MAE_MW,RMSE_MW,Source
+Atlite V112 @ 80 m,127.7,0.974,4111,6538,matched_era5_national (Atlite row; paper rounding)
+Windpowerlib V112 @ 80 m (matched proxy),129.3,0.974,4364,6980,controlled V112@80 m library test (same ERA5 cutout)
+Windpowerlib MaStR fleet (types + hubs),141.0,0.976,5612,7845,matched_era5_national (WPL MaStR row; paper rounding)

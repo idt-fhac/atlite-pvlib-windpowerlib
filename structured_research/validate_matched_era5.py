@@ -38,15 +38,15 @@ from pvlib.irradiance import erbs
 from pvlib.temperature import sapm_cell
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from lib import (
+from lib.constants import (
     ATLITE_WIND_TURBINE,
     SAPM_A,
     SAPM_B,
     SAPM_DT,
     TEMP_COEFF,
     ZONES,
-    capacity_factor,
 )
+from lib.wind_cf import capacity_factor
 from utils import (
     resolve_engine,
     offline_mode,

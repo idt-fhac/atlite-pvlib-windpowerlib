@@ -17,7 +17,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import shutil
 import sys
 
 import matplotlib.pyplot as plt
@@ -26,6 +25,8 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from utils import calculate_metrics, ensure_results_dir, result_path
+from lib.figures import save_vector_figure
+from lib.manuscript import copy_to_manuscript
 
 DAY_HOURS = range(6, 18)
 NIGHT_HOURS = list(range(18, 24)) + list(range(0, 6))
@@ -35,6 +36,13 @@ WEEK_WIND = ("2023-01-15", "2023-01-21")   # synoptic winter wind week
 WEEK_SOLAR = ("2023-07-10", "2023-07-16")  # summer PV week
 TSO_FOCUS = "DE_TENNET"
 TSO_LABEL = "TenneT"
+TSO_ORDER = ("DE_50HZ", "DE_AMPRION", "DE_TENNET", "DE_TRANSNET")
+TSO_LABELS = {
+    "DE_50HZ": "50Hertz",
+    "DE_AMPRION": "Amprion",
+    "DE_TENNET": "TenneT",
+    "DE_TRANSNET": "TransnetBW",
+}
 
 COLORS = {
     "actual": "#222222",
@@ -193,15 +201,32 @@ def build_week_plots():
         save_path=(out / "week_national_solar.png"),
     )
 
-    # 5–6) TSO (TenneT) on matched ERA5
+    # 5–6) TSO (TenneT) on matched ERA5 + 4-panel all-TSO weeks for the paper
     tso_path = Path(result_path("matched_era5_tso_timeseries.parquet"))
-    if not tso_path.exists():
-        print(f"WARNING: skipping TSO week plots — missing {tso_path}")
+    sample_path = Path(result_path("matched_era5_tso_sample_weeks.csv"))
+    tso = None
+    if tso_path.exists():
+        tso = pd.read_parquet(tso_path)
+        if not isinstance(tso.index, pd.DatetimeIndex):
+            tso.index = pd.to_datetime(tso.index)
+        # Cache the two paper sample weeks so export can rebuild without the full parquet
+        sample = pd.concat(
+            [tso.loc[WEEK_WIND[0] : WEEK_WIND[1]], tso.loc[WEEK_SOLAR[0] : WEEK_SOLAR[1]]]
+        )
+        sample = sample[~sample.index.duplicated(keep="first")].sort_index()
+        sample.to_csv(sample_path)
+        copy_to_manuscript(sample_path)
+        print(f"Saved {sample_path}")
+    elif sample_path.exists():
+        tso = pd.read_csv(sample_path, index_col=0, parse_dates=True)
+        print(f"Using cached TSO sample weeks → {sample_path}")
+    else:
+        print(
+            f"WARNING: skipping TSO week plots — missing {tso_path} "
+            f"and {sample_path}"
+        )
         return
 
-    tso = pd.read_parquet(tso_path)
-    if not isinstance(tso.index, pd.DatetimeIndex):
-        tso.index = pd.to_datetime(tso.index)
     z = TSO_FOCUS
     plot_week(
         {
@@ -225,11 +250,84 @@ def build_week_plots():
         ylabel="Power (MW)",
         save_path=(out / "week_tso_solar.png"),
     )
+    plot_tso_four_panel(
+        tso,
+        tech="wind",
+        start=WEEK_WIND[0],
+        end=WEEK_WIND[1],
+        stem="tso_matched_week_wind",
+        ylabel="Power (MW)",
+        title=(
+            f"German TSO onshore wind — matched ERA5 sample week "
+            f"{WEEK_WIND[0]} to {WEEK_WIND[1]}"
+        ),
+    )
+    plot_tso_four_panel(
+        tso,
+        tech="solar",
+        start=WEEK_SOLAR[0],
+        end=WEEK_SOLAR[1],
+        stem="tso_matched_week_solar",
+        ylabel="Power (MW)",
+        title=(
+            f"German TSO solar — matched ERA5 sample week "
+            f"{WEEK_SOLAR[0]} to {WEEK_SOLAR[1]}"
+        ),
+    )
 
 
-def sync_to_text_data():
-    text_data = Path(__file__).resolve().parents[1] / "text" / "data"
-    text_data.mkdir(parents=True, exist_ok=True)
+def plot_tso_four_panel(
+    tso: pd.DataFrame,
+    *,
+    tech: str,
+    start: str,
+    end: str,
+    stem: str,
+    ylabel: str,
+    title: str,
+) -> None:
+    """Four-zone chronology for wind or solar on the matched ERA5 cutout."""
+    if tech == "wind":
+        ent_key, sim_a, sim_b, lab_a, lab_b = (
+            "entsoe_wind",
+            "wpl_wind",
+            "atlite_wind",
+            "Windpowerlib MaStR (ERA5)",
+            "Atlite (ERA5)",
+        )
+    elif tech == "solar":
+        ent_key, sim_a, sim_b, lab_a, lab_b = (
+            "entsoe_solar",
+            "pvlib_mastr_solar",
+            "atlite_solar",
+            "PVLib MaStR (ERA5)",
+            "Atlite (ERA5)",
+        )
+    else:
+        raise ValueError(tech)
+
+    fig, axes = plt.subplots(4, 1, figsize=(12.5, 10.5), sharex=True)
+    for ax, zone in zip(axes, TSO_ORDER):
+        ent = tso[f"{ent_key}_{zone}"].loc[start:end]
+        a = tso[f"{sim_a}_{zone}"].loc[start:end]
+        b = tso[f"{sim_b}_{zone}"].loc[start:end]
+        ax.plot(ent.index, ent.values, color=COLORS["actual"], lw=1.6, label="ENTSO-E feed-in")
+        ax.plot(a.index, a.values, color=COLORS["oeds"], ls="--", lw=1.2, label=lab_a)
+        ax.plot(b.index, b.values, color=COLORS["atlite"], ls="-.", lw=1.2, label=lab_b)
+        ax.set_ylabel(ylabel)
+        ax.set_title(TSO_LABELS[zone], loc="left", fontsize=10)
+        ax.grid(True, alpha=0.3)
+        if ax is axes[0]:
+            ax.legend(loc="upper right", fontsize=8, ncol=3)
+    axes[-1].set_xlabel("Time")
+    fig.suptitle(title, fontsize=11, y=0.995)
+    fig.tight_layout()
+    save_vector_figure(fig, stem)
+    plt.close(fig)
+    print(f"Saved vector figure {stem}")
+
+
+def sync_to_manuscript_data():
     names = [
         "week_single_wind.png",
         "week_single_solar.png",
@@ -238,13 +336,16 @@ def sync_to_text_data():
         "week_national_wind.png",
         "week_national_solar.png",
         "diurnal_wind_daynight.csv",
+        "matched_era5_tso_sample_weeks.csv",
+        "tso_matched_week_wind.pdf",
+        "tso_matched_week_solar.pdf",
+        "tso_matched_week_wind.svg",
+        "tso_matched_week_solar.svg",
     ]
     for name in names:
-        src = result_path(name)
+        src = Path(result_path(name))
         if src.exists():
-            dst = (text_data / name)
-            shutil.copy2(src, dst)
-            print(f"Copied → {dst}")
+            copy_to_manuscript(src)
 
 
 def main():
@@ -255,7 +356,7 @@ def main():
     print(f"Saved {out_csv}")
     print(diurnal.to_string(index=False))
     build_week_plots()
-    sync_to_text_data()
+    sync_to_manuscript_data()
 
 
 if __name__ == "__main__":

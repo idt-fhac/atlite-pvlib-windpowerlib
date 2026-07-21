@@ -9,8 +9,12 @@
 
 ## Section 1: Introduction
 * Context: VRE modeling for planning and markets (AMIRIS, ASSUME).
-* Two paradigms: Atlite (ERA5, vectorized layouts) vs. OEDS/PVLib/Windpowerlib (ECMWF IFS, plant/class-specific).
-* Contributions: Jülich PV, Kelmarsh wind farm, TSO/national January + full-year seasonal, \(z_0\) sensitivity, class aggregation runtime.
+* Related work: Atlite vs plant-level PVLib/Windpowerlib; ERA5/reanalysis wind validation; shear; farm validation; solar feed-in vs BTM.
+* Contributions (enumerated): matched-ERA5 library comparison; Jülich/Kelmarsh + TSO/national; V112 vs MaStR fleet; solar residual budget.
+
+## Figures (main)
+* National seasonal bars; **TSO yield-ratio bars (4 zones)**; wind library-test bars; solar residual budget; Jülich fortnight/scatter; national solar duration/scatters (appendix).
+* Optional after `validate_matched_era5` + `plot_weeks`: `tso_matched_week_{wind,solar}` 4-panel chronologies.
 
 ## Section 2: Methodology & Data Pipeline
 * Weather: ERA5 (Atlite; 100 m wind) vs. ECMWF IFS (OEDS; 10 m wind + log shear).

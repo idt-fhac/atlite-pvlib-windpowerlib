@@ -49,7 +49,7 @@ OFFLINE_MODE=1 .venv/bin/python structured_research/explore/<script>.py
 | 7 | `plot_tso_solar_feedin_scale.py` — TSO solar figures only |
 | 8 | `plot_week_and_diurnal.py` |
 | 9 | `build_seasonal_comparison_report.py` |
-| 10 | `export_paper_figures.py` — SVG→PDF for vector figs; PNG for scatters → `latex/data/` |
+| 10 | `export_paper_figures.py` — SVG→PDF for vector figs (incl. TSO/seasonal/budget bars); PNG for scatters → `latex/data/` |
 
 ## Design notes
 

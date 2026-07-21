@@ -21,6 +21,11 @@ PAPER_VECTOR_STEMS = (
     "annual_seasonal_summary",
     "national_daily_max_duration",
     "national_hourly_duration",
+    "tso_yield_ratios",
+    "wind_library_test",
+    "solar_residual_budget",
+    "tso_matched_week_wind",
+    "tso_matched_week_solar",
 )
 
 # Scatters stay raster (PNG)

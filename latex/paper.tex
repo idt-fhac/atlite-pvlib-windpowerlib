@@ -73,18 +73,39 @@ ERA5 \sep photovoltaics \sep wind power \sep Atlite \sep PVLib \sep Windpowerlib
 \section{Introduction}
 
 Market and system models such as AMIRIS~\citep{AMIRIS} and ASSUME~\citep{ASSUME2023} need weather converted into solar photovoltaic (PV) and wind generation.
-Two common routes are Atlite~\citep{Hofmann2021} on reanalysis grids (typically ERA5~\citep{Hersbach2020}), and plant-level libraries such as PVLib~\citep{pvlib2023,pvlib2023iotools} and Windpowerlib~\citep{windpowerlib}.
+Two common routes are Atlite~\citep{Hofmann2021} on reanalysis grids (typically ERA5~\citep{Hersbach2020}), as used for example in PyPSA-Eur~\citep{PyPSAEur}, and plant-level libraries such as PVLib~\citep{pvlib2023,pvlib2023iotools} and Windpowerlib~\citep{windpowerlib}.
 We previously compared open agent-based market tools~\citep{Maurer2024KnowTools} and looked at how spatial resolution of renewables and demand changes market outcomes~\citep{Maurer2025Resolution}.
-Those studies take weather-to-power time series as given; library differences can feed straight into the market results.
+Those studies take weather-to-power time series as given; library and fleet assumptions can feed straight into the market results.
 
-Gaps to meters or public feed-in are often not a broken converter alone.
-Behind-the-meter (BTM) self-consumption~\citep{Zech2024}, curtailment, redispatch, measurement error, coarse reanalysis, snow, park wakes, and availability all matter.
-Reanalysis wind bias and logarithmic shear limits are well known~\citep{Staffell2016BiasCorrection,Gruber2021GlobalWind,Banuelos2010Extrapolation,Peterson1978Shear}.
-Multi-country ERA5 studies can look skillful after bias correction, but residuals stay spatially structured~\citep{Gruber2021MultiCountry}.
+\subsection{Related work}
+Open weather-to-power tooling spans two design centres.
+Atlite targets continental cutouts and layout-weighted conversion with low memory cost~\citep{Hofmann2021}; its documentation is explicit that free-stream conversion is not a substitute for validated single-plant forecasts.
+PVLib and Windpowerlib instead expose plant- and turbine-resolved physics (irradiance transposition, cell temperature, power curves, hub shear) that energy-system workflows often wrap at registry scale~\citep{pvlib2023,windpowerlib}.
+Comparable generator families include Renewables.ninja-style bias-corrected reanalysis products~\citep{Staffell2016BiasCorrection} and broader meteorological inputs curated for energy models~\citep{Bloomfield2022}.
+What remains scarce is a Germany-focused, seasonal head-to-head of Atlite versus PVLib/Windpowerlib when the weather product is held fixed---so that library and fleet choices are not confounded with the choice of reanalysis.
+
+Reanalysis wind skill is well studied.
+Staffell and Pfenninger~\citep{Staffell2016BiasCorrection} showed that bias-corrected reanalysis can reproduce national wind chronologies yet still needs spatial correction.
+Gruber et al.\ compared MERRA-2 and ERA5 wind simulations across countries after Global Wind Atlas correction, with structured residuals remaining~\citep{Gruber2021GlobalWind,Gruber2019BrazilWind}, and reported multi-country ERA5 PV and wind simulations with similar caveats~\citep{Gruber2021MultiCountry}.
+Further regional tests span Ethiopia~\citep{Nefabas2021EthiopianWind}, Australian reanalyses versus ERA5~\citep{Palmer2025Australia}, and recent high-resolution open wind assessments~\citep{PenaSanchez2026}.
+Hub-height conversion itself is a second error source: power-law and logarithmic shear are standard but site-sensitive~\citep{Peterson1978Shear,Banuelos2010Extrapolation,Sumair2020CoastalExtrap,Theuer2020LidarExtrap}, and thermal stratification matters especially offshore~\citep{Lange2004SeaRoughness}.
+Farm- and plant-level validation literature stresses machine equivalents, interconnection measurements, and complex terrain~\citep{Muljadi2010MachineEquivalent,Muljadi2008Validation,Quon2019Terrain,SCADAInterconnect2014}---issues that free-stream national stacks omit unless wakes, availability, and electrical losses are added explicitly.
+
+On solar, gaps to public statistics are often not a converter bug alone.
+Behind-the-meter (BTM) self-consumption, curtailment, redispatch, snow, and coarse irradiance all matter~\citep{Zech2024}.
 Fraunhofer ISE puts German PV self-consumption in 2023 at 8.20\,TWh (about 13\% of net PV generation)~\citep{FraunhoferISE2025SelfConsumption}.
+ENTSO-E Transparency series for Germany are documented as public-grid feed-in rather than full AC generation~\citep{ENTSOEActualGeneration}, so scoring models against those series mixes conversion error with the generation-to-feed-in boundary.
 
-What is still missing is a seasonal comparison of Atlite versus PVLib/Windpowerlib on the \emph{same} weather.
-In this paper we run that comparison for Germany 2023---from plant and farm through transmission system operator (TSO) zones to national European Network of Transmission System Operators for Electricity (ENTSO-E) feed-in---on one shared ERA5 cutout.
+\subsection{This study}
+What is still missing is a seasonal comparison of Atlite versus PVLib/Windpowerlib on the \emph{same} weather, across plant, farm, TSO, and national scales.
+In this paper we run that comparison for Germany 2023---from Campus J{\"u}lich PV and Kelmarsh wind SCADA through transmission system operator (TSO) zones to national European Network of Transmission System Operators for Electricity (ENTSO-E) feed-in---on one shared ERA5 cutout.
+Our contributions are:
+\begin{enumerate}
+    \item a matched-ERA5 comparison of Atlite and PVLib/Windpowerlib that separates converter differences from weather-product differences;
+    \item plant- and farm-scale anchors (Campus J{\"u}lich PV; Kelmarsh wind) plus TSO and national ENTSO-E benchmarks for calendar year 2023;
+    \item a controlled national wind test with fixed Vestas V112 at 80\,m versus a MaStR-mapped Windpowerlib fleet, to isolate library from fleet representation;
+    \item a bounded residual budget for national solar against feed-in, including literature BTM, after stating inverter and aging derates.
+\end{enumerate}
 
 \section{Data and Methods}
 \label{sec:methods}
@@ -221,8 +242,9 @@ We use Kelmarsh only as a library check, not to set German $z_0$.
 \label{sec:national}
 
 All national and TSO results use the shared ERA5 cutout.
-Figure~\ref{fig_seasonal_summary} and Tables~\ref{tab_national_season}--\ref{tab_tso_fy} report energy ratios and correlations versus ENTSO-E.
-For wind, the left panel mixes a MaStR-realistic Windpowerlib fleet with Atlite's single V112@80\,m setup---different fleets, not only different libraries.
+Figure~\ref{fig_seasonal_summary} and Table~\ref{tab_national_season} report national seasonal energy ratios and correlations versus ENTSO-E.
+Figure~\ref{fig_tso_yield} (with Table~\ref{tab_tso_fy} for exact percentages) benchmarks all four TSO zones on the same cutout.
+For wind, the national seasonal panel mixes a MaStR-realistic Windpowerlib fleet with Atlite's single V112@80\,m setup---different fleets, not only different libraries.
 For solar, both stacks are compared with ENTSO-E public-grid feed-in (Section~\ref{sec:solar_residual}).
 
 \begin{figure}[htbp]
@@ -236,17 +258,30 @@ National seasonal yield ratios versus ENTSO-E, 2023, matched ERA5.
 
 \end{figure}
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=14.0cm]{data/tso_yield_ratios.pdf}
+\caption{%
+Full-year 2023 TSO yield ratios versus ENTSO-E on the matched ERA5 cutout.
+\emph{Left:} onshore wind---MaStR fleet (Windpowerlib) versus Atlite V112@80\,m.
+\emph{Right:} solar PV versus public-grid feed-in (PVLib MaStR orientations).
+Dashed line: ENTSO-E $=100\%$.
+TransnetBW wind under Atlite ($82.1\%$) and TenneT solar (highest overshoot) are the clear spatial outliers.\label{fig_tso_yield}
+}
+
+\end{figure}
+
 \begin{table}[htbp]
 \caption{%
 Germany national stacks versus ENTSO-E by season (matched ERA5).
 Wind columns: Atlite V112@80\,m vs.\ Windpowerlib MaStR fleet (Section~\ref{sec:wind_fleet}).
 Solar columns are raw (no national fleet aging); derated solar is in Table~\ref{tab_national_derates}.
-Column keys: W = wind, S = solar, WPL = Windpowerlib, Atl.\ = Atlite; $r$ W/A and $r$ P/A are the Windpowerlib/Atlite and PVLib/Atlite correlations.\label{tab_national_season}
+Column keys: W = wind, S = solar, WPL = Windpowerlib, Atl.\ = Atlite; $r$ W and $r$ S are correlations of each stack versus ENTSO-E (WPL/Atlite for wind; PVLib/Atlite for solar).\label{tab_national_season}
 }
 
 \begin{tabularx}{\textwidth}{lcccccccc}
 \toprule
-\textbf{Season} & \textbf{W WPL} & \textbf{W Atl.} & \textbf{$r$ W/A} & \textbf{S PVLib} & \textbf{S Atl.} & \textbf{$r$ P/A}\\
+\textbf{Season} & \textbf{W WPL} & \textbf{W Atl.} & \textbf{$r$ W} & \textbf{S PVLib} & \textbf{S Atl.} & \textbf{$r$ S}\\
 \midrule
 Winter & 143.0\% & 133.7\% & 0.963 / 0.962 & 262.2\% & 238.6\% & 0.838 / 0.896\\
 Spring & 136.5\% & 120.7\% & 0.981 / 0.976 & 189.8\% & 165.6\% & 0.938 / 0.940\\
@@ -259,7 +294,7 @@ Full year & 141.0\% & 127.7\% & 0.976 / 0.974 & 184.7\% & 162.5\% & 0.935 / 0.94
 
 \begin{table}[htbp]
 \caption{%
-Full-year 2023 TSO yield ratios versus ENTSO-E (matched ERA5).
+Full-year 2023 TSO yield ratios versus ENTSO-E (matched ERA5); companion numbers for Figure~\ref{fig_tso_yield}.
 Wind: MaStR fleet vs.\ V112@80\,m (not fleet-matched).
 Solar: raw vs.\ feed-in.\label{tab_tso_fy}
 }
@@ -281,18 +316,50 @@ Under the default national setups the energy ratios are 127.7\% (Atlite V112@80\
 That gap is mostly fleet representation (Section~\ref{sec:wind_fleet}).
 TransnetBW is a spatial outlier for Atlite (82.1\% under-prediction amid national over-prediction); Windpowerlib is high but closer there (117.7\%).
 Solar exceeds feed-in in every TSO; TenneT is highest (Section~\ref{sec:solar_residual}).
+Figures~\ref{fig_tso_week_wind}--\ref{fig_tso_week_solar} show matched-ERA5 sample weeks for all four zones: chronologies track ENTSO-E, while energy bias remains.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=14.0cm]{data/tso_matched_week_wind.pdf}
+\caption{%
+Matched ERA5 onshore-wind sample week (15--21 January 2023) for all four German TSO zones versus ENTSO-E feed-in.
+Windpowerlib uses the MaStR fleet; Atlite uses V112@80\,m.\label{fig_tso_week_wind}
+}
+
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=14.0cm]{data/tso_matched_week_solar.pdf}
+\caption{%
+Matched ERA5 solar sample week (10--16 July 2023) for all four German TSO zones versus ENTSO-E public-grid feed-in.
+Both stacks overshoot peaks systematically; TenneT shows the largest absolute gap.\label{fig_tso_week_solar}
+}
+
+\end{figure}
 
 \subsection{Matched V112 library test versus MaStR fleet sensitivity}
 \label{sec:wind_fleet}
 
 To compare libraries fairly, turbine type and hub height are held fixed.
-Forcing Windpowerlib onto Atlite's V112/3000 at 80\,m with Atlite-like log down-extrapolation from ERA5 100\,m yields 129.3\% of ENTSO-E versus Atlite's 127.7\% (Table~\ref{tab_wind_v112}): Windpowerlib / Atlite $\sim$101\% ($r\approx1.00$).
+Forcing Windpowerlib onto Atlite's V112/3000 at 80\,m with Atlite-like log down-extrapolation from ERA5 100\,m yields 129.3\% of ENTSO-E versus Atlite's 127.7\% (Figure~\ref{fig_wind_library}; Table~\ref{tab_wind_v112}): Windpowerlib / Atlite $\sim$101\% ($r\approx1.00$).
 Most of the leftover is oedb versus Atlite power-curve tables at low--mid winds.
 Cut-out at 25\,m/s and Nomenclature of Territorial Units for Statistics level~3 (NUTS3) centroid versus plant layout barely move the needle for Germany 2023.
 
 The MaStR-fleet Windpowerlib run maps each unit to an oedb type by diameter and rated power and uses the reported hub (capacity-weighted mean $\sim$113\,m).
 It yields 141.0\% of ENTSO-E and about $110\%$ of Atlite V112@80\,m.
 We do not use coarse specific-power class aggregation for the national numbers.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=10.0cm]{data/wind_library_test.pdf}
+\caption{%
+National onshore wind versus ENTSO-E, matched ERA5, 2023.
+Matched V112@80\,m library test (left/centre) versus MaStR fleet sensitivity (right).
+Fixing turbine and hub largely removes the library gap; the MaStR fleet remains higher as a free-stream multi-hub representation.\label{fig_wind_library}
+}
+
+\end{figure}
 
 \begin{table}[htbp]
 \caption{%
@@ -341,11 +408,21 @@ ENTSO-E solar here is public-grid feed-in, not full generation~\citep{ENTSOEActu
 Raw simulations still sit above feed-in in every season, including summer (146.2--168.6\% before fleet aging; Table~\ref{tab_national_season}), while $r$ versus feed-in stays around $0.94$.
 Snow or soiling in winter alone cannot explain that pattern.
 
-Table~\ref{tab_residual_budget} is a coarse annual energy budget after inverter/fleet-aging derates.
+Table~\ref{tab_residual_budget} and Figure~\ref{fig_solar_budget} give a coarse annual energy budget after inverter/fleet-aging derates.
 Literature BTM~\citep{FraunhoferISE2025SelfConsumption} closes about one-quarter of the feed-in gap; the leftover ($\sim$23--25\,TWh) is open.
 National MaStR solar capacity is only $\sim$106--108\% of ENTSO-E nameplate, so inventory over-count is not enough.
 TenneT is the clear energy outlier (raw $\sim$187--216\% of feed-in): MaStR/ENTSO-E capacity there is $\sim$117--121\% (end-2023 partly imputed), and capacity-normalized full-load-hour ratios stay $\sim$150--160\% in all TSO zones.
 So TenneT combines a higher inventory ratio with the same structural feed-in gap.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=12.5cm]{data/solar_residual_budget.pdf}
+\caption{%
+National solar energy residual for 2023 (TWh) after physics derates on the matched ERA5 cutout.
+Bars: simulated generation, ENTSO-E public-grid feed-in, literature BTM ($8.2$\,TWh), and the unattributed remainder.\label{fig_solar_budget}
+}
+
+\end{figure}
 
 \begin{table}[htbp]
 \caption{%
@@ -369,7 +446,7 @@ Gap after BTM (unattributed) & 25.2 & 23.2\\
 
 \begin{table}[htbp]
 \caption{%
-Solar residual bound (national, after physics).
+Solar residual bound (national, after physics); companion to Figure~\ref{fig_solar_budget}.
 Known vs.\ unattributed.\label{tab_solar_loss_budget}
 }
 

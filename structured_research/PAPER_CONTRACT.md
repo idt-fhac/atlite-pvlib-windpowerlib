@@ -24,11 +24,15 @@ Weather for all paper claims: shared ERA5 cutout (`cutouts/germany_2023.nc` / J�
 | Jülich PV vs meter (tables, duration, scatter, 2-week) | `validate_juelich_solar.py` | `juelich_*` | yes |
 | Kelmarsh wind SCADA check | `validate_kelmarsh_wind.py` | `kelmarsh_*` | optional |
 | National / TSO wind & solar vs ENTSO-E (matched ERA5) | `validate_matched_era5.py` | `matched_era5_*.csv`, `matched_era5_timeseries.csv`, `matched_era5_tso_timeseries.parquet`, `matched_era5_library_delta.png` | summary plots as needed |
+| TSO full-year yield-ratio bars (all 4 zones) | `export_paper_figures.py` | `tso_yield_ratios.pdf/svg`, `tso_yield_ratios.csv` from `matched_era5_tso.csv` | yes |
+| National wind library test bars (V112 vs MaStR) | `export_paper_figures.py` | `wind_library_test.pdf/svg` from `matched_era5_wind_library_test.csv` | yes |
+| National solar residual budget bars | `export_paper_figures.py` | `solar_residual_budget.pdf/svg`, `solar_residual_budget.csv` | yes |
+| TSO matched-ERA5 sample-week chronologies (4 panels) | `plot_week_and_diurnal.py` (+ rebuild in `export_paper_figures.py`) | `tso_matched_week_{wind,solar}.pdf/svg`; caches `matched_era5_tso_sample_weeks.csv` | yes |
 | National solar physics derates + scatter / duration | `investigate_national_solar_derates.py` | `national_solar_derates_*.csv`, `national_*_duration.png`, `national_solar_scatter*.png` | yes |
 | TSO solar duration / two-week (physics + illustrative ×0.62) | `plot_tso_solar_feedin_scale.py` | `tso_solar_*.png/csv` only — **does not** own national duration | yes |
 | Sample weeks + day/night wind table | `plot_week_and_diurnal.py` | `week_*.png`, `diurnal_wind_daynight.csv` | yes |
 | Seasonal comparison matrix (markdown) | `build_seasonal_comparison_report.py` | `main_seasonal_comparison_*` from **matched** + plant CSVs | no |
-| Manuscript vector figures (SVG→PDF) + scatter PNG | `export_paper_figures.py` | `*.svg`/`*.pdf` for fortnights, duration, seasonal bars; scatters stay `*.png` | yes (PDF/PNG) |
+| Manuscript vector figures (SVG→PDF) + scatter PNG | `export_paper_figures.py` | `*.svg`/`*.pdf` for fortnights, duration, seasonal/TSO bars; scatters stay `*.png` | yes (PDF/PNG) |
 
 ## Orchestration
 

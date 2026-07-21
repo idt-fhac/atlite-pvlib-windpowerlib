@@ -283,6 +283,234 @@ def plot_seasonal_summary() -> None:
     plt.close(fig)
 
 
+TSO_ORDER = ("DE_50HZ", "DE_AMPRION", "DE_TENNET", "DE_TRANSNET")
+TSO_LABELS = {
+    "DE_50HZ": "50Hertz",
+    "DE_AMPRION": "Amprion",
+    "DE_TENNET": "TenneT",
+    "DE_TRANSNET": "TransnetBW",
+}
+
+
+def plot_tso_yield_ratios() -> None:
+    """Full-year TSO yield ratios vs ENTSO-E (matched ERA5) — paper fig for all four zones."""
+    path = Path(result_path("matched_era5_tso.csv"))
+    if not path.exists():
+        raise FileNotFoundError(f"Missing {path}; run validate_matched_era5.py first.")
+    df = pd.read_csv(path)
+
+    def pick(tech: str, model_substr: str) -> list[float]:
+        out = []
+        for z in TSO_ORDER:
+            row = df[
+                (df["Scale"] == z)
+                & (df["Technology"] == tech)
+                & (df["Model"].str.contains(model_substr, regex=False))
+            ]
+            if row.empty:
+                raise ValueError(f"No row for {z} / {tech} / {model_substr}")
+            # Prefer MaStR orientation for solar when both PVLib rows exist
+            if tech == "Solar" and model_substr == "PVLib":
+                mastr = row[row["Model"].str.contains("MaStR", regex=False)]
+                row = mastr if not mastr.empty else row
+            out.append(float(row.iloc[0]["Ratio_%"]))
+        return out
+
+    w_wpl = pick("Wind", "Windpowerlib")
+    w_atl = pick("Wind", "Atlite")
+    s_pv = pick("Solar", "PVLib")
+    s_atl = pick("Solar", "Atlite")
+
+    # Tidy table for manuscript / reuse
+    tidy = pd.DataFrame(
+        {
+            "TSO": [TSO_LABELS[z] for z in TSO_ORDER],
+            "Scale": list(TSO_ORDER),
+            "Wind_WPL_MaStR_%": w_wpl,
+            "Wind_Atlite_V112_%": w_atl,
+            "Solar_PVLib_MaStR_%": s_pv,
+            "Solar_Atlite_%": s_atl,
+        }
+    )
+    tidy_path = Path(result_path("tso_yield_ratios.csv"))
+    tidy.to_csv(tidy_path, index=False)
+    copy_to_manuscript(tidy_path)
+
+    labels = [TSO_LABELS[z] for z in TSO_ORDER]
+    x = np.arange(len(labels))
+    w = 0.18
+    fig, axes = plt.subplots(1, 2, figsize=(11.5, 4.2), sharey=False)
+
+    ax = axes[0]
+    ax.bar(x - 1.5 * w, w_wpl, w, label="WPL MaStR fleet", color="C0")
+    ax.bar(x - 0.5 * w, w_atl, w, label="Atlite V112@80 m", color="C2")
+    ax.axhline(100, color="0.3", ls="--", lw=1, label="ENTSO-E = 100%")
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels)
+    ax.set_ylabel("Yield ratio vs ENTSO-E (%)")
+    ax.set_title("Onshore wind (full year 2023)")
+    ax.legend(fontsize=8, loc="upper right")
+    ax.set_ylim(0, max(max(w_wpl), max(w_atl), 100) * 1.15)
+    ax.grid(True, axis="y", alpha=0.3)
+
+    ax = axes[1]
+    ax.bar(x - 1.5 * w, s_pv, w, label="PVLib MaStR", color="C0")
+    ax.bar(x - 0.5 * w, s_atl, w, label="Atlite CSi", color="C2")
+    ax.axhline(100, color="0.3", ls="--", lw=1, label="ENTSO-E = 100%")
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels)
+    ax.set_ylabel("Yield ratio vs ENTSO-E (%)")
+    ax.set_title("Solar PV vs public-grid feed-in")
+    ax.legend(fontsize=8, loc="upper right")
+    ax.set_ylim(0, max(max(s_pv), max(s_atl), 100) * 1.08)
+    ax.grid(True, axis="y", alpha=0.3)
+
+    fig.suptitle(
+        "German TSO zones 2023 — matched ERA5 cutout vs ENTSO-E",
+        fontsize=11,
+        y=1.02,
+    )
+    fig.tight_layout()
+    save_vector_figure(fig, "tso_yield_ratios")
+    plt.close(fig)
+    logger.info("Wrote tso_yield_ratios (+ tso_yield_ratios.csv)")
+
+
+def plot_wind_library_test() -> None:
+    """Bar chart: Atlite V112 vs WPL V112 vs WPL MaStR fleet (national)."""
+    path = Path(result_path("matched_era5_wind_library_test.csv"))
+    if not path.exists():
+        raise FileNotFoundError(
+            f"Missing {path}; ship paper-path library-test summary CSV."
+        )
+    df = pd.read_csv(path)
+    short = {
+        "Atlite V112 @ 80 m": "Atlite\nV112@80 m",
+        "Windpowerlib V112 @ 80 m (matched proxy)": "WPL V112@80 m\n(matched)",
+        "Windpowerlib MaStR fleet (types + hubs)": "WPL MaStR\nfleet",
+    }
+    labels = [short.get(c, c) for c in df["Configuration"]]
+    ratios = df["Ratio_%"].astype(float).to_numpy()
+    colors = ["C2", "C0", "C1"]
+
+    fig, ax = plt.subplots(figsize=(7.2, 4.2))
+    bars = ax.bar(np.arange(len(labels)), ratios, color=colors, width=0.65)
+    ax.axhline(100, color="0.3", ls="--", lw=1)
+    ax.set_xticks(np.arange(len(labels)))
+    ax.set_xticklabels(labels)
+    ax.set_ylabel("Yield ratio vs ENTSO-E (%)")
+    ax.set_title(
+        "National onshore wind 2023 — library test vs fleet\n"
+        "(matched ERA5 cutout; free-stream, no wakes)"
+    )
+    ax.set_ylim(0, max(ratios) * 1.18)
+    ax.grid(True, axis="y", alpha=0.3)
+    for bar, r in zip(bars, ratios):
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            r + 2,
+            f"{r:.1f}%",
+            ha="center",
+            va="bottom",
+            fontsize=9,
+        )
+    fig.tight_layout()
+    save_vector_figure(fig, "wind_library_test")
+    plt.close(fig)
+
+
+def plot_solar_residual_budget() -> None:
+    """Waterfall-style national solar residual after physics derates + literature BTM."""
+    path = Path(result_path("national_solar_derates_vs_entsoe.csv"))
+    if not path.exists():
+        raise FileNotFoundError(f"Missing {path}; run investigate_national_solar_derates.py.")
+    df = pd.read_csv(path)
+    full = df[df["Window"] == "Full_8760"]
+
+    def gwh(config_substr: str) -> float:
+        row = full[full["Configuration"].str.contains(config_substr, regex=False)]
+        if row.empty:
+            raise ValueError(f"No derate row matching {config_substr}")
+        return float(row.iloc[0]["Sim_GWh"])
+
+    entsoe = float(full.iloc[0]["ENTSOE_GWh"])
+    pv = gwh("PVLib MaStR × η_inv × aging")
+    atl = gwh("Atlite × aging")
+    btm_twh = 8.20
+    btm_gwh = btm_twh * 1000.0
+
+    # Persist tidy budget used by the figure / paper table cross-check
+    budget = pd.DataFrame(
+        [
+            {
+                "Quantity": "Simulated generation (after physics)",
+                "PVLib_TWh": round(pv / 1000.0, 1),
+                "Atlite_TWh": round(atl / 1000.0, 1),
+            },
+            {
+                "Quantity": "ENTSO-E solar feed-in",
+                "PVLib_TWh": round(entsoe / 1000.0, 1),
+                "Atlite_TWh": round(entsoe / 1000.0, 1),
+            },
+            {
+                "Quantity": "Gap to feed-in",
+                "PVLib_TWh": round((pv - entsoe) / 1000.0, 1),
+                "Atlite_TWh": round((atl - entsoe) / 1000.0, 1),
+            },
+            {
+                "Quantity": "Literature BTM self-consumption",
+                "PVLib_TWh": btm_twh,
+                "Atlite_TWh": btm_twh,
+            },
+            {
+                "Quantity": "Gap after BTM (unattributed)",
+                "PVLib_TWh": round((pv - entsoe) / 1000.0 - btm_twh, 1),
+                "Atlite_TWh": round((atl - entsoe) / 1000.0 - btm_twh, 1),
+            },
+        ]
+    )
+    budget_path = Path(result_path("solar_residual_budget.csv"))
+    budget.to_csv(budget_path, index=False)
+    copy_to_manuscript(budget_path)
+
+    categories = ["Simulated\n(after physics)", "ENTSO-E\nfeed-in", "BTM\n(known)", "Unattributed\nresidual"]
+    # Stacked composition of simulated energy for each library
+    fig, axes = plt.subplots(1, 2, figsize=(10.5, 4.2), sharey=True)
+    for ax, sim_gwh, title, color in (
+        (axes[0], pv, "PVLib MaStR ×η_inv×aging", "C0"),
+        (axes[1], atl, "Atlite CSi ×aging", "C2"),
+    ):
+        gap = sim_gwh - entsoe
+        unattr = gap - btm_gwh
+        vals = [sim_gwh / 1000.0, entsoe / 1000.0, btm_twh, unattr / 1000.0]
+        bar_colors = [color, "0.35", "C1", "0.7"]
+        bars = ax.bar(np.arange(len(categories)), vals, color=bar_colors, width=0.7)
+        ax.set_xticks(np.arange(len(categories)))
+        ax.set_xticklabels(categories, fontsize=8)
+        ax.set_ylabel("Energy (TWh)")
+        ax.set_title(title, fontsize=10)
+        ax.grid(True, axis="y", alpha=0.3)
+        for bar, v in zip(bars, vals):
+            ax.text(
+                bar.get_x() + bar.get_width() / 2,
+                v + 0.8,
+                f"{v:.1f}",
+                ha="center",
+                va="bottom",
+                fontsize=8,
+            )
+        ax.set_ylim(0, max(sim_gwh / 1000.0, entsoe / 1000.0) * 1.2)
+
+    fig.suptitle(
+        "National solar 2023 residual vs ENTSO-E feed-in (matched ERA5)",
+        fontsize=11,
+        y=1.02,
+    )
+    fig.tight_layout()
+    save_vector_figure(fig, "solar_residual_budget")
+    plt.close(fig)
+
+
 def plot_national_solar_duration_and_scatters() -> None:
     ts = pd.read_csv(result_path("matched_era5_timeseries.csv"), index_col=0, parse_dates=True)
     eta_age = FLEET_AGING_FALLBACK
@@ -383,6 +611,58 @@ def plot_national_solar_duration_and_scatters() -> None:
         plt.close(fig)
 
 
+def plot_tso_matched_weeks_from_cache() -> None:
+    """Rebuild 4-panel TSO week figures from cached sample weeks (offline-friendly)."""
+    sample_path = Path(result_path("matched_era5_tso_sample_weeks.csv"))
+    parquet_path = Path(result_path("matched_era5_tso_timeseries.parquet"))
+    if sample_path.exists():
+        tso = pd.read_csv(sample_path, index_col=0, parse_dates=True)
+        logger.info("TSO week panels from %s", sample_path.name)
+    elif parquet_path.exists():
+        tso = pd.read_parquet(parquet_path)
+        if not isinstance(tso.index, pd.DatetimeIndex):
+            tso.index = pd.to_datetime(tso.index)
+        logger.info("TSO week panels from %s", parquet_path.name)
+    else:
+        logger.warning(
+            "Skipping tso_matched_week_* — missing sample weeks CSV and parquet "
+            "(run plot_weeks after validate_matched_era5)."
+        )
+        return
+
+    # Import locally to avoid circular imports with plot_week_and_diurnal helpers
+    from plot_week_and_diurnal import (
+        WEEK_SOLAR,
+        WEEK_WIND,
+        plot_tso_four_panel,
+    )
+
+    plot_tso_four_panel(
+        tso,
+        tech="wind",
+        start=WEEK_WIND[0],
+        end=WEEK_WIND[1],
+        stem="tso_matched_week_wind",
+        ylabel="Power (MW)",
+        title=(
+            f"German TSO onshore wind — matched ERA5 sample week "
+            f"{WEEK_WIND[0]} to {WEEK_WIND[1]}"
+        ),
+    )
+    plot_tso_four_panel(
+        tso,
+        tech="solar",
+        start=WEEK_SOLAR[0],
+        end=WEEK_SOLAR[1],
+        stem="tso_matched_week_solar",
+        ylabel="Power (MW)",
+        title=(
+            f"German TSO solar — matched ERA5 sample week "
+            f"{WEEK_SOLAR[0]} to {WEEK_SOLAR[1]}"
+        ),
+    )
+
+
 def main() -> None:
     ensure_results_dir()
     logger.info("Exporting paper figures (SVG→PDF for vector; PNG for scatters)")
@@ -408,7 +688,11 @@ def main() -> None:
     plot_juelich_scatter(comp)
 
     plot_seasonal_summary()
+    plot_tso_yield_ratios()
+    plot_wind_library_test()
+    plot_solar_residual_budget()
     plot_national_solar_duration_and_scatters()
+    plot_tso_matched_weeks_from_cache()
 
     # Ensure any pre-existing scatter PNGs from pipeline are still in latex/data
     for stem in PAPER_RASTER_STEMS:

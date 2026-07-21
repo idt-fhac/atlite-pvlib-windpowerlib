@@ -1,0 +1,6 @@
+Quantity,PVLib_TWh,Atlite_TWh
+Simulated generation (after physics),88.6,86.6
+ENTSO-E solar feed-in,55.2,55.2
+Gap to feed-in,33.4,31.4
+Literature BTM self-consumption,8.2,8.2
+Gap after BTM (unattributed),25.2,23.2
