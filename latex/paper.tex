@@ -46,21 +46,19 @@
             country={Germany}}
 
 \begin{abstract}
-Energy-system and market models convert meteorology into solar photovoltaic (PV) and wind generation with libraries such as Atlite, PVLib, and Windpowerlib.
-In this paper, we compare these stacks for Germany in calendar year 2023 at plant, wind-farm, TSO-zone, and national scales on a shared ERA5 cutout.
-Holding the weather fixed isolates conversion and fleet choices from the weather product.
-At Campus J{\"u}lich, after inverter efficiency ($0.90$) and linear module aging ($0.5\,\%$/y), PVLib+SAPM and Atlite agree to within $2\%$ annually and remain about $10$--$12\%$ high versus measured AC.
-For national onshore wind, fixing the turbine and hub (Vestas V112 at 80\,m) largely removes the library gap: Windpowerlib reaches $129.3\%$ of ENTSO-E and Atlite $127.7\%$ (ratio $\sim$101\%).
-A MaStR-based Windpowerlib fleet at reported hubs yields $141.0\%$ of ENTSO-E; both free-stream setups omit park wakes and operational losses.
-National solar simulations exceed ENTSO-E public-grid feed-in in every season; literature behind-the-meter self-consumption ($8.2$\,TWh) closes only part of that gap.
+For German onshore wind in 2023, the choice of conversion library shifts simulated national energy by up to $14$ percentage points---but when the turbine type and hub height are held fixed, the gap between Atlite and Windpowerlib shrinks to about $2$ percentage points.
+We isolate this library-versus-fleet effect by running both stacks on a single shared ERA5 cutout across plant, wind-farm, transmission system operator (TSO) zone, and national scales.
+At Campus J{\"u}lich, after inverter efficiency ($0.90$) and linear module aging ($0.5\,\%$/y), PVLib+SAPM and Atlite agree to within $2\%$ annually and stay about $10$--$12\%$ above measured AC---an overestimate dominated by clear-sky peaks in the coarse reanalysis.
+National solar simulations exceed ENTSO-E public-grid feed-in in every season ($\sim$161--185\% before fleet aging); literature behind-the-meter self-consumption ($8.2$\,TWh) closes roughly a quarter of the feed-in gap, leaving $\sim$23--25\,TWh unattributed.
+These results suggest that, for energy-system modelling, fleet assumptions matter more than the library for wind, while solar scoring against feed-in rather than generation is the dominant obstacle to validation.
 \end{abstract}
 
 \begin{highlights}
-\item Atlite and PVLib/Windpowerlib compared on shared ERA5 for Germany 2023.
-\item At Campus J{\"u}lich, PV stacks agree within $\sim$2\% after inverter and aging.
-\item Matched V112@80\,m largely closes the national wind library gap.
-\item National solar stays high vs.\ ENTSO-E feed-in after physics derates.
-\item Free-stream wind setups omit wakes; residual vs.\ feed-in remains open.
+\item Same-weather comparison: Atlite versus PVLib/Windpowerlib on one ERA5 cutout for Germany 2023.
+\item Fixing turbine type and hub height reduces the national wind library gap from 14\,pp to $\sim$2\,pp.
+\item At Campus J{\"u}lich, PV stacks agree within $\sim$2\% after inverter and aging; $\sim$10\% residual is ERA5 clear-sky bias.
+\item National solar overshoots ENTSO-E feed-in by 60--85\%; behind-the-meter covers only $\sim$25\% of the gap.
+\item For modellers: calibrate the fleet first; fix the benchmark second.
 \end{highlights}
 
 \begin{keyword}
@@ -72,10 +70,10 @@ ERA5 \sep photovoltaics \sep wind power \sep Atlite \sep PVLib \sep Windpowerlib
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
-Market and system models such as AMIRIS~\citep{AMIRIS} and ASSUME~\citep{ASSUME2023} need weather converted into solar photovoltaic (PV) and wind generation.
-Two common routes are Atlite~\citep{Hofmann2021} on reanalysis grids (typically ERA5~\citep{Hersbach2020}), as used for example in PyPSA-Eur~\citep{PyPSAEur}, and plant-level libraries such as PVLib~\citep{pvlib2023,pvlib2023iotools} and Windpowerlib~\citep{windpowerlib}.
-We previously compared open agent-based market tools~\citep{Maurer2024KnowTools} and looked at how spatial resolution of renewables and demand changes market outcomes~\citep{Maurer2025Resolution}.
-Those studies take weather-to-power time series as given; library and fleet assumptions can feed straight into the market results.
+When two agent-based electricity market models produce different prices, is it because they disagree on bidding strategy---or because they started from different wind and solar time series?
+In earlier work we compared open market tools~\citep{Maurer2024KnowTools} and showed that spatial resolution of renewables and demand shifts market outcomes~\citep{Maurer2025Resolution}.
+Both studies take weather-to-power conversion as given, yet the two most common open-source routes---Atlite~\citep{Hofmann2021} on ERA5 reanalysis grids~\citep{Hersbach2020}, as used by PyPSA-Eur~\citep{PyPSAEur}, and plant-level libraries such as PVLib~\citep{pvlib2023,pvlib2023iotools} and Windpowerlib~\citep{windpowerlib}---can disagree on national annual energy by more than $10$ percentage points.
+The question is whether that gap comes from the physics inside each library or from the fleet assumptions wrapped around it.
 
 \subsection{Related work}
 Open weather-to-power tooling spans two design centres.
@@ -97,14 +95,14 @@ Fraunhofer ISE puts German PV self-consumption in 2023 at 8.20\,TWh (about 13\% 
 ENTSO-E Transparency series for Germany are documented as public-grid feed-in rather than full AC generation~\citep{ENTSOEActualGeneration}, so scoring models against those series mixes conversion error with the generation-to-feed-in boundary.
 
 \subsection{This study}
-What is still missing is a seasonal comparison of Atlite versus PVLib/Windpowerlib on the \emph{same} weather, across plant, farm, TSO, and national scales.
-In this paper we run that comparison for Germany 2023---from Campus J{\"u}lich PV and Kelmarsh wind SCADA through transmission system operator (TSO) zones to national European Network of Transmission System Operators for Electricity (ENTSO-E) feed-in---on one shared ERA5 cutout.
+We run a seasonal comparison of Atlite versus PVLib/Windpowerlib on one shared ERA5 cutout for Germany 2023, spanning Campus J{\"u}lich PV through four TSO zones to national ENTSO-E feed-in.
+Holding the weather product fixed means that any remaining difference is the library, the fleet assumptions, or the benchmark itself---not the reanalysis.
 Our contributions are:
 \begin{enumerate}
-    \item a matched-ERA5 comparison of Atlite and PVLib/Windpowerlib that separates converter differences from weather-product differences;
-    \item plant- and farm-scale anchors (Campus J{\"u}lich PV; Kelmarsh wind) plus TSO and national ENTSO-E benchmarks for calendar year 2023;
-    \item a controlled national wind test with fixed Vestas V112 at 80\,m versus a MaStR-mapped Windpowerlib fleet, to isolate library from fleet representation;
-    \item a bounded residual budget for national solar against feed-in, including literature BTM, after stating inverter and aging derates.
+    \item a matched-ERA5 comparison that separates converter differences from weather-product differences;
+    \item plant-scale anchors (Campus J{\"u}lich PV; Kelmarsh wind SCADA) plus TSO and national ENTSO-E benchmarks for calendar year 2023;
+    \item a controlled national wind test---same Vestas V112 at 80\,m for both libraries---that isolates the library from fleet representation;
+    \item a partial national solar residual budget against feed-in: inverter and aging derates, literature behind-the-meter self-consumption, and the unattributed remainder.
 \end{enumerate}
 
 \section{Data and Methods}
