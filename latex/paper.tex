@@ -152,11 +152,11 @@ All tables recreate from that repository after a one-time extract/cutout prepare
 \subsection{Campus Jülich PV}
 \label{sec:juelich}
 
-Campus Jülich is one plant, not a fleet sample.
+Campus J{\"u}lich is a 216.96\,kWp rooftop system---a single plant, not a fleet sample, but one where we have hourly metered AC and a known tilt and azimuth.
 On the matched ERA5 cutout, PVLib and Atlite track each other closely (full-year Pearson correlation $r\approx0.996$ between libraries).
 After $\eta_{\mathrm{inv}}$ on PVLib and shared aging (mid-2011 commission prior; unit not uniquely identified in MaStR), annual ratios versus measured AC are $111.9\%$ (PVLib+SAPM) and $109.8\%$ (Atlite), with Atlite slightly higher on correlation (Tables~\ref{tab_juelich}--\ref{tab_juelich_season}).
 Full-year sums fill meter gaps as zeros, which inflate $r$ and shrink the mean absolute error and root-mean-square error (MAE/RMSE) relative to daytime-overlap hours (Appendix~\ref{app:juelich}).
-The leftover $\sim$10\% versus the meter is mostly cloudy hours, snow from 19~January~2023, those gap zeros, and coarse ERA5---clear-sky peaks are nearly calibrated.
+The remaining $\sim$10\% overestimate versus the meter arises mostly from hours when ERA5 overestimates clear-sky irradiance, plus the 19~January~2023 snow event that no reanalysis-driven model can capture, and from gap-fill zeros.
 
 Figures~\ref{fig_juelich_june}--\ref{fig_juelich_dailymax_dur} show a June fortnight, the hourly scatter, and the daily-maximum duration curve; the remaining overestimate concentrates in the upper clear-sky tail.
 Appendix~\ref{app:juelich} adds the January snow window, factor ablation, error-window tables, and a Kimber soiling sensitivity ($\sim$0.3 percentage points [pp] annually; does not close the meter gap).
@@ -348,8 +348,8 @@ Both stacks overshoot peaks systematically; TenneT shows the largest absolute ga
 
 To compare libraries fairly, turbine type and hub height are held fixed.
 Forcing Windpowerlib onto Atlite's V112/3000 at 80\,m with Atlite-like log down-extrapolation from ERA5 100\,m yields 129.3\% of ENTSO-E versus Atlite's 127.7\% (Figure~\ref{fig_wind_library}; Table~\ref{tab_wind_v112}): Windpowerlib / Atlite $\sim$101\% ($r\approx1.00$).
-Most of the leftover is oedb versus Atlite power-curve tables at low--mid winds.
-Cut-out at 25\,m/s and Nomenclature of Territorial Units for Statistics level~3 (NUTS3) centroid versus plant layout barely move the needle for Germany 2023.
+The residual 1.6 pp between the matched libraries traces to differences in the oedb and Atlite power-curve tables at low-to-mid wind speeds.
+Cut-out handling at 25\,m/s and the choice of NUTS3 centroid versus plant-level layout barely matter for a national annual total in Germany 2023.
 
 The MaStR-fleet Windpowerlib run maps each unit to an oedb type by diameter and rated power and uses the reported hub (capacity-weighted mean $\sim$113\,m).
 It yields 141.0\% of ENTSO-E and about $110\%$ of Atlite V112@80\,m.
@@ -386,8 +386,8 @@ Windpowerlib MaStR fleet (types + hubs) & 141.0 & 0.976 & 5612 & 7845\\
 Neither stack applies park wakes, turbine availability, electrical losses, or grid curtailment: both convert free-stream hub wind through a power curve onto nameplate capacity.
 Table~\ref{tab_wind_loss_budget} puts known terms next to the MaStR-fleet overshoot ($\sim$41\% vs.\ ENTSO-E).
 Onshore Redispatch alone is $\sim$3.4\% of ENTSO-E onshore energy~\citep{SMARD2024Redispatch2023}---too small to close the gap.
-Availability, electrical losses, ERA5 wind bias, and park wakes are not split out here; together they have to cover most of what remains.
-Atlite's short-hub V112@80\,m layout (versus $\sim$113\,m MaStR mean) only partly offsets those omissions (127.7\% vs.\ 141.0\%).
+Availability, electrical losses, ERA5 wind bias, and park wakes are not split out here; together they must account for most of the remaining overshoot.
+The lower Atlite ratio (127.7\%) compared to the MaStR fleet (141.0\%) partly reflects Atlite's lower hub height (80\,m versus the MaStR capacity-weighted mean of $\sim$113\,m), but this offset is incidental---it does not substitute for an explicit wake or loss model.
 
 \begin{table}[htbp]
 \caption{%
@@ -458,12 +458,13 @@ This confirms that the generation-to-feed-in gap is not a simple scale factor: b
 \subsection{Wind: day versus night and TransnetBW}
 \label{sec:wind_diurnal}
 
-Day (06:00--17:00 UTC) and night (18:00--05:00 UTC) subsets on the matched ERA5 cutout (Table~\ref{tab_wind_daynight}) show roughly balanced overshoot nationally for the MaStR fleet ($\sim$140--142\%) and for Atlite V112@80\,m ($\sim$126--129\%), and the same pattern at Kelmarsh once Windpowerlib also uses ERA5 100\,m + Hellman ($\sim$126--129\% day/night).
-That looks more like a near-scalar free-stream bias than a day/night shear story on this cutout.
+Day (06:00--17:00 UTC) and night (18:00--05:00 UTC) subsets on the matched ERA5 cutout (Table~\ref{tab_wind_daynight}) show roughly balanced overshoot nationally: the MaStR fleet sits at $\sim$140--142\% in both windows, and Atlite V112@80\,m at $\sim$126--129\%.
+The same pattern holds at Kelmarsh once Windpowerlib also uses ERA5 100\,m + Hellman ($\sim$126--129\% day/night).
+The absence of a diurnal bias structure confirms that the overshoot is a near-constant free-stream scaling issue on this cutout, not a stability- or shear-driven artefact.
 
-TransnetBW is awkward for Atlite under the V112@80\,m proxy (82.1\% of ENTSO-E while the national ratio is 127.7\%).
-Hub mix, roughness, layout, and capacity mapping are all candidates; we did not pin it down.
-Windpowerlib's MaStR fleet is high there too (117.7\%) but closer to ENTSO-E~\citep{Staffell2016BiasCorrection,Banuelos2010Extrapolation,Peterson1978Shear}.
+TransnetBW stands out as an anomaly: Atlite V112@80\,m under-predicts there (82.1\% of ENTSO-E) while over-predicting nationally.
+The most likely explanation is terrain: TransnetBW covers the Black Forest and the Swabian Alb, where ERA5's $\sim$30\,km grid cannot resolve orographic wind channelling, and where the V112 proxy may be poorly matched to the actual installed fleet.
+Windpowerlib's MaStR fleet, which uses site-specific turbine types and hubs, is high there too (117.7\%) but much closer to ENTSO-E.
 
 \begin{table}[htbp]
 \caption{%
@@ -642,8 +643,7 @@ Unlike Jülich measured AC ($\sim$110\% after derates), the national leftover is
 
 Figure~\ref{fig_national_dailymax_dur} shows the duration curve of daily maxima for physics-derated generation versus ENTSO-E feed-in.
 Figures~\ref{fig_national_scatter}--\ref{fig_national_scatter_scaled} show the corresponding hourly scatters without and with a trial constant scalar ($\approx 0.62$).
-Energy matching lines up annual sums, but the cloud does not collapse onto $y=x$---generation and feed-in are not the same thing (Section~\ref{sec:solar_residual}).
-That leftover is still open.
+Energy matching lines up annual sums, but the cloud does not collapse onto $y=x$: behind-the-meter generation, curtailment, and estimation artefacts introduce temporal structure that a flat scalar cannot reproduce (Section~\ref{sec:solar_residual}).
 
 \begin{table}[htbp]
 \caption{Germany national solar versus ENTSO-E feed-in, matched ERA5 cutout, with and without inverter/fleet-aging derates (2023).\label{tab_national_derates}}
