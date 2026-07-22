@@ -485,28 +485,56 @@ Germany national & Night & 141.5 & 126.3 & 0.980 & 0.976\\
 \end{table}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Limitations}
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{Fleet matters more than the library}
+
+The central result from the wind comparison is that a $14$ percentage-point gap between Windpowerlib and Atlite (141.0\% vs.\ 127.7\% of ENTSO-E) shrinks to about $2$ pp once both libraries use the same Vestas V112 at 80\,m.
+For an energy-system modeller choosing between these stacks, the implication is direct: the turbine catalogue, the hub-height distribution, and the shear model will dominate national energy totals far more than any difference in the internal power-curve interpolation.
+This is consistent with the farm-level result at Kelmarsh (Appendix~\ref{app:kelmarsh}), where both libraries sit within a few percentage points on the same SCADA benchmark.
+
+The practical recommendation is therefore to fix the fleet first.
+If two modelling teams use the same turbine and hub assumptions, their wind time series will agree at the $\sim$1--2\% level regardless of library---well within the noise introduced by ERA5 itself.
+If they use different fleet representations, the library comparison is confounded and the resulting differences cannot be attributed.
+
+\subsection{Solar: the benchmark problem}
+
+On solar, the situation is more subtle.
+At Campus J{\"u}lich---where we have measured AC from a known plant---the two stacks agree within $\sim$2\% of each other and sit about $10$--$12\%$ above the meter after inverter and aging derates.
+That residual concentrates in clear-sky peaks and plausibly reflects ERA5 irradiance overshoot, not a library bug.
+
+At national scale, the comparison shifts from a metering problem to a benchmarking problem.
+ENTSO-E series report public-grid feed-in, not total generation: behind-the-meter self-consumption ($8.2$\,TWh, roughly $13\%$ of net generation) is absent from the reference.
+After physics derates and literature BTM, a $\sim$23--25\,TWh gap remains (Table~\ref{tab_residual_budget}).
+That gap is about $42$--$45\%$ of the reported feed-in and is dominated by the generation-to-feed-in boundary---curtailment, estimation methods in the Transparency Platform, timing of MaStR registrations, and possibly ERA5 irradiance bias---rather than by library deficiencies.
+
+The seasonal colour decomposition in Figure~\ref{fig_national_scatter} shows that the overshoot is not concentrated in winter (where snow and low sun could explain it) but is spread across all seasons, consistent with a structural offset between simulated generation and reported feed-in.
+TenneT's outsized ratio ($\sim$187--216\% of feed-in) coincides with the highest MaStR-to-ENTSO-E capacity ratio ($\sim$117--121\%), suggesting that inventory differences compound the feed-in gap there.
+
+For modellers, the takeaway is that scoring raw simulated PV against ENTSO-E feed-in is a comparison of two different quantities.
+Until a public German generation time series (including BTM) is available, the apparent overshoot should not be interpreted as a converter error alone.
+
+\subsection{Limitations}
 \label{sec:limitations}
 
-This study covers one meteorological year (Germany 2023) on a single shared ERA5 cutout, with only one instrumented German PV plant that has a documented age prior and gap-filling.
-National solar is scored against ENTSO-E feed-in rather than generation, so the residual after literature behind-the-meter self-consumption remains open (Section~\ref{sec:solar_residual}).
-On wind, the national stacks match fleet only in the V112@80\,m test; comparing the MaStR fleet to that fixed proxy mixes library and fleet choices.
-Park wakes, availability, electrical losses, and ERA5 wind bias are not separated, while onshore Redispatch ($\sim$3.4\%) is known but small~\citep{SMARD2024Redispatch2023}.
-The Kimber soiling check at Jülich is an appendix exercise with a rural prior on ERA5 precipitation, not a calibrated national derate.
-Kelmarsh is a UK SCADA check rather than a German farm, and the TransnetBW shortfall under Atlite V112@80\,m is left undiagnosed.
+This study covers one meteorological year (Germany 2023) on a single shared ERA5 cutout, with only one instrumented German PV plant.
+The aging prior at J{\"u}lich is a documented estimate (mid-2011 commission, $\pm$2 years would shift the derate by $\pm$1 pp); the exact MaStR unit is not uniquely identified.
+On wind, park wakes, turbine availability, electrical losses, and ERA5 wind bias are not separated; onshore Redispatch ($\sim$3.4\% of ENTSO-E wind energy~\citep{SMARD2024Redispatch2023}) is known but small.
+The Kimber soiling check at J{\"u}lich uses a California rural prior on ERA5 precipitation and is not a calibrated national derate.
+TransnetBW at $82.1\%$ under Atlite V112@80\,m is the spatial outlier (Figure~\ref{fig_tso_yield}); hub mix, roughness, and complex terrain in the Black Forest and the Swabian Alb are plausible explanations, but we did not isolate the cause.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions}
 \label{sec:conclusions}
 
-In this paper we compared Atlite and PVLib/Windpowerlib for Germany 2023 on one ERA5 cutout, from Campus Jülich and Kelmarsh up to TSO and national ENTSO-E series.
-At Jülich, with inverter and aging stated, the two PV stacks differ by only about $2\%$ annually and stay about $10$--$12\%$ high versus the meter; scalars fix bias, not correlation, and one plant does not speak for the German fleet.
-On national wind, fixing V112 at 80\,m largely kills the library gap (129.3\% vs.\ 127.7\% of ENTSO-E; Table~\ref{tab_wind_v112}).
-The MaStR-fleet Windpowerlib run at $141.0\%$ is a different question---more hubs and machine types, still free-stream---and while correlations with feed-in are high ($r\geq0.974$), energy is high too, as expected without wakes and operational losses.
-TransnetBW at $82.1\%$ under Atlite V112@80\,m remains the odd zone out.
-National solar stays well above ENTSO-E feed-in after physics derates: BTM ($8.2$\,TWh) covers only part of the gap, and a good $r$ versus feed-in ($r\approx0.94$) is not the same as calibrated generation (Appendix~\ref{app:national_derates}).
-Both stacks give usable chronologies; if the goal is to rank libraries on wind, fix the turbine and hub first.
-Further work should look at wakes, availability, and how to score solar against generation rather than public-grid feed-in alone.
+We compared Atlite and PVLib/Windpowerlib for Germany 2023 on a single ERA5 cutout, from a campus PV plant through four TSO zones to national ENTSO-E feed-in.
+Two results stand out.
+First, for national onshore wind, the apparent library gap is almost entirely a fleet gap: fixing the turbine and hub collapses a $14$ pp difference to $\sim$2 pp.
+Second, for national solar, the dominant obstacle to validation is not the converter but the benchmark: ENTSO-E feed-in excludes behind-the-meter generation, and the $\sim$23--25\,TWh unattributed residual after BTM cannot be closed by physics derates alone.
+
+For energy-system modellers, the practical advice is: calibrate your fleet assumptions before comparing libraries, and do not interpret a feed-in overshoot as a simulation error without accounting for the generation-to-feed-in boundary.
+Future work should address park wakes and turbine availability on wind, and pursue generation-level solar benchmarks that include behind-the-meter production.
 
 \section*{CRediT authorship contribution statement}
 Conceptualization, F.M.; methodology, F.M.; software, F.M. and J.S.; validation, F.M. and J.S.; formal analysis, F.M. and J.S.; investigation, F.M. and J.S.; resources, V.S.; data curation, J.S.; writing---original draft preparation, F.M.; writing---review and editing, V.S., J.S. and J.R.; visualization, J.S.; supervision, V.S.
