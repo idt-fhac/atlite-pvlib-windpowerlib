@@ -225,25 +225,32 @@ The leftmost (highest) peaks---mostly clear summer days---remain the main residu
 
 \end{figure}
 
-Constant multipliers ($\eta_{\mathrm{inv}}$, aging) cut energy bias and MAE/RMSE but cannot raise Pearson $r$ (scale invariance).
-SAPM mainly trims summer noon error; $\Delta r$ is tiny.
-Better to write the factors down than hide them in one annual loss scalar.
+Constant multipliers ($\eta_{\mathrm{inv}}$, aging) reduce energy bias and MAE/RMSE but cannot change Pearson $r$, which is scale-invariant.
+SAPM trims the summer noon error by about $3$ percentage points in energy (Table~\ref{tab_juelich}), while the correlation improvement ($\Delta r \approx 0.001$) is negligible.
+The practical lesson for modellers is that explicit, separately reported derates are more transparent than a single annual loss scalar---and for this plant, the $\sim$$10\%$ residual after derates sits squarely in the clear-sky tail where ERA5 irradiance is known to overshoot ground stations.
 
-\subsection{Kelmarsh Wind Farm}
-
-On the same ERA5 100\,m fields used nationally (Hellman shear to each turbine hub), Windpowerlib yields 127.4\% of farm SCADA (corr.\ 0.905); Atlite 130.8\% (0.902).
-The two libraries now sit within a few points on energy and correlation; day/night splits stay roughly balanced for both (Table~\ref{tab_wind_daynight}).
-We use Kelmarsh only as a library check, not to set German $z_0$.
+As a non-German library check, Kelmarsh wind farm SCADA (6$\times$2.05\,MW, UK) confirms that the two libraries sit within a few percentage points once both use ERA5 100\,m winds with the same shear model (Appendix~\ref{app:kelmarsh}).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{TSO and National Seasonal Results}
 \label{sec:national}
 
 All national and TSO results use the shared ERA5 cutout.
+Figure~\ref{fig_tso_map} shows the four German TSO zones and the Campus J{\"u}lich site for reference.
 Figure~\ref{fig_seasonal_summary} and Table~\ref{tab_national_season} report national seasonal energy ratios and correlations versus ENTSO-E.
-Figure~\ref{fig_tso_yield} (with Table~\ref{tab_tso_fy} for exact percentages) benchmarks all four TSO zones on the same cutout.
-For wind, the national seasonal panel mixes a MaStR-realistic Windpowerlib fleet with Atlite's single V112@80\,m setup---different fleets, not only different libraries.
+Figure~\ref{fig_tso_yield} (with Table~\ref{tab_tso_fy} for exact percentages) benchmarks the zones on the same cutout.
+For wind, the national seasonal panel compares a MaStR-realistic Windpowerlib fleet with Atlite's single V112@80\,m setup---different fleets, not only different libraries.
 For solar, both stacks are compared with ENTSO-E public-grid feed-in (Section~\ref{sec:solar_residual}).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=8.0cm]{data/tso_zone_map.pdf}
+\caption{%
+The four German TSO zones (50Hertz, Amprion, TenneT, TransnetBW) and the Campus J{\"u}lich validation site ($\star$).
+TenneT covers Schleswig-Holstein, much of Lower Saxony, and Bavaria; TransnetBW covers Baden-W{\"u}rttemberg.\label{fig_tso_map}
+}
+
+\end{figure}
 
 \begin{figure}[htbp]
 \centering
@@ -424,45 +431,29 @@ Bars: simulated generation, ENTSO-E public-grid feed-in, literature BTM ($8.2$\,
 
 \begin{table}[htbp]
 \caption{%
-Coarse national solar energy budget for 2023 (TWh), matched ERA5, versus ENTSO-E feed-in.
+National solar energy budget for 2023 (TWh), matched ERA5, versus ENTSO-E feed-in.
 BTM $8.20$\,TWh from Fraunhofer ISE~\citep{FraunhoferISE2025SelfConsumption}.
-Physics: PVLib $\eta_{\mathrm{inv}}\times\eta_{\mathrm{age}}$; Atlite $\eta_{\mathrm{age}}$ only.\label{tab_residual_budget}
+Physics: PVLib $\eta_{\mathrm{inv}}\times\eta_{\mathrm{age}}$; Atlite $\eta_{\mathrm{age}}$ only.
+National MaStR/ENTSO-E capacity ratio is $\sim$106--108\%.\label{tab_residual_budget}
 }
 
-\begin{tabularx}{\textwidth}{lCC}
+\begin{tabularx}{\textwidth}{lCCl}
 \toprule
-\textbf{Quantity} & \textbf{PVLib} & \textbf{Atlite}\\
+\textbf{Quantity} & \textbf{PVLib (TWh)} & \textbf{Atlite (TWh)} & \textbf{Status}\\
 \midrule
-Simulated generation (after physics) & 88.6 & 86.6\\
-ENTSO-E solar feed-in & 55.2 & 55.2\\
-Gap to feed-in & 33.4 & 31.4\\
-Literature BTM self-consumption (known) & 8.2 & 8.2\\
-Gap after BTM (unattributed) & 25.2 & 23.2\\
+Simulated generation (after physics) & 88.6 & 86.6 & Computed\\
+ENTSO-E solar feed-in & 55.2 & 55.2 & Measured\\
+Gap to feed-in & 33.4 & 31.4 & \\
+\midrule
+Literature BTM self-consumption & 8.2 & 8.2 & Known~\citep{FraunhoferISE2025SelfConsumption}\\
+Unattributed residual & 25.2 & 23.2 & Open\\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-\begin{table}[htbp]
-\caption{%
-Solar residual bound (national, after physics); companion to Figure~\ref{fig_solar_budget}.
-Known vs.\ unattributed.\label{tab_solar_loss_budget}
-}
-
-\begin{tabularx}{\textwidth}{lC}
-\toprule
-\textbf{Term} & \textbf{Approx.}\\
-\midrule
-Gap to feed-in (PVLib / Atlite) & 33.4 / 31.4\,TWh\\
-Literature BTM (known) & 8.2\,TWh ($\sim$25\% of gap)\\
-Unattributed (curtailment, estimation, timing, weather, \ldots) & $\sim$23--25\,TWh\\
-National MaStR/ENTSO-E capacity & $\sim$106--108\%\\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-We also tried a constant energy-matching scalar ($\approx 0.62$) on top of the physics derates.
-Annual sums line up by construction, but the feed-in duration-curve shape does not come back (Appendix~\ref{app:national_derates}, Figure~\ref{fig_national_dailymax_dur}).
-So we do not treat that scalar as a validated generation-to-feed-in conversion.
+As a sanity check, we tried a constant energy-matching scalar ($\approx 0.62$) on top of the physics derates.
+Annual sums match by construction, but the feed-in duration-curve shape does not recover (Appendix~\ref{app:national_derates}, Figure~\ref{fig_national_dailymax_dur}).
+This confirms that the generation-to-feed-in gap is not a simple scale factor: behind-the-meter, curtailment, and estimation artefacts enter with their own temporal signatures.
 
 \subsection{Wind: day versus night and TransnetBW}
 \label{sec:wind_diurnal}
@@ -603,6 +594,15 @@ Shaded: snow on modules from 19~January---an example of reality that free-stream
 \includegraphics[width=12.0cm]{data/juelich_hourly_duration.pdf}
 \caption{Hourly generation duration curve at Jülich, 2023 (overlap hours).\label{fig_juelich_hourly_dur}}
 \end{figure}
+
+\section{Kelmarsh wind farm (library check)}
+\label{app:kelmarsh}
+
+Kelmarsh (6$\times$Senvion MM92, 2.05\,MW each) is a UK wind farm with public SCADA data.
+On the same ERA5 100\,m fields used nationally (Hellman shear to each turbine hub), Windpowerlib yields 127.4\% of farm SCADA (corr.\ 0.905); Atlite 130.8\% (0.902).
+Day/night splits stay roughly balanced for both (Table~\ref{tab_wind_daynight}).
+We use Kelmarsh only as a non-German library sanity check---not to calibrate German surface roughness or to draw national conclusions.
+The result is consistent with the national matched-V112 test: once both libraries use the same turbine and hub, they agree to within a few percentage points.
 
 \section{National matched-ERA5 solar with inverter and fleet aging}
 \label{app:national_derates}
