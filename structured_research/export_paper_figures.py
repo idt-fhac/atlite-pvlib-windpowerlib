@@ -182,11 +182,11 @@ def plot_juelich_daily_max_duration(comp: pd.DataFrame) -> None:
         ls="-.",
         label="Atlite CSi ×aging (daily max)",
     )
-    ax.set_xlabel("Percentage of days (%)")
+    ax.set_xlabel("Fraction of days (%)")
     ax.set_ylabel("Daily maximum power (kW)")
     ax.set_title(
         "Jülich PV 2023 — duration curve of daily maximum generation\n"
-        f"(n={n} days with measured max > 0; sims include inverter/aging)"
+        "(sims include inverter/aging)"
     )
     ax.set_xlim(0, 100)
     ax.set_ylim(0, None)
@@ -199,6 +199,7 @@ def plot_juelich_daily_max_duration(comp: pd.DataFrame) -> None:
 
 def plot_juelich_scatter(comp: pd.DataFrame) -> None:
     """Raster scatter (kept as PNG)."""
+    from scipy.stats import linregress
     act = _actual_overlap_from_comp(comp)
     idx = act.dropna().index.intersection(comp.index)
     a = act.loc[idx]
@@ -206,12 +207,25 @@ def plot_juelich_scatter(comp: pd.DataFrame) -> None:
     pv = comp.loc[idx, "oeds_temp_corrected"]
     atl = comp.loc[idx, "atlite_sim"]
     mask = a.notna()
-    a, pv, atl = a[mask], pv[mask], atl[mask]
+    a_vals = a[mask].to_numpy(dtype=float)
+    pv_vals = pv[mask].to_numpy(dtype=float)
+    atl_vals = atl[mask].to_numpy(dtype=float)
 
     fig, ax = plt.subplots(figsize=(7.5, 7.0))
-    ax.scatter(a, pv, s=8, alpha=0.15, color="C0", label="PVLib SAPM ×η_inv×aging", rasterized=True)
-    ax.scatter(a, atl, s=8, alpha=0.15, color="C2", label="Atlite CSi ×aging", rasterized=True)
-    lim = float(max(a.max(), pv.max(), atl.max()) * 1.02)
+    ax.scatter(a_vals, pv_vals, s=8, alpha=0.15, color="C0", label="PVLib SAPM ×η_inv×aging", rasterized=True)
+    ax.scatter(a_vals, atl_vals, s=8, alpha=0.15, color="C2", label="Atlite CSi ×aging", rasterized=True)
+
+    valid_pv = ~np.isnan(a_vals) & ~np.isnan(pv_vals)
+    if valid_pv.any():
+        res_pv = linregress(a_vals[valid_pv], pv_vals[valid_pv])
+        ax.plot(a_vals[valid_pv], res_pv.intercept + res_pv.slope * a_vals[valid_pv], color="C0", ls="-", lw=1.5, label=f"PVLib fit: slope={res_pv.slope:.2f}, R²={res_pv.rvalue**2:.2f}")
+
+    valid_atl = ~np.isnan(a_vals) & ~np.isnan(atl_vals)
+    if valid_atl.any():
+        res_atl = linregress(a_vals[valid_atl], atl_vals[valid_atl])
+        ax.plot(a_vals[valid_atl], res_atl.intercept + res_atl.slope * a_vals[valid_atl], color="C2", ls="-", lw=1.5, label=f"Atlite fit: slope={res_atl.slope:.2f}, R²={res_atl.rvalue**2:.2f}")
+
+    lim = float(max(a_vals.max(), pv_vals.max(), atl_vals.max()) * 1.02)
     ax.plot([0, lim], [0, lim], "k--", lw=1, label="y = x")
     ax.set_xlim(0, lim)
     ax.set_ylim(0, lim)
@@ -262,7 +276,7 @@ def plot_seasonal_summary() -> None:
     ax.set_ylabel("Yield ratio vs ENTSO-E (%)")
     ax.set_title("Onshore wind\n(fleet vs single-turbine proxy)")
     ax.legend(fontsize=8, loc="upper right")
-    ax.set_ylim(0, max(max(w_wpl), max(w_atl)) * 1.12)
+    ax.set_ylim(80, max(max(w_wpl), max(w_atl)) * 1.12)
     ax.grid(True, axis="y", alpha=0.3)
 
     ax = axes[1]
@@ -274,7 +288,7 @@ def plot_seasonal_summary() -> None:
     ax.set_ylabel("Yield ratio vs ENTSO-E (%)")
     ax.set_title("Solar PV\n(vs public-grid feed-in)")
     ax.legend(fontsize=8, loc="upper right")
-    ax.set_ylim(0, max(max(s_pv), max(s_atl)) * 1.08)
+    ax.set_ylim(80, max(max(s_pv), max(s_atl)) * 1.08)
     ax.grid(True, axis="y", alpha=0.3)
 
     fig.suptitle("Germany 2023 — matched ERA5 cutout vs ENTSO-E", fontsize=11, y=1.02)
@@ -350,7 +364,7 @@ def plot_tso_yield_ratios() -> None:
     ax.set_ylabel("Yield ratio vs ENTSO-E (%)")
     ax.set_title("Onshore wind (full year 2023)")
     ax.legend(fontsize=8, loc="upper right")
-    ax.set_ylim(0, max(max(w_wpl), max(w_atl), 100) * 1.15)
+    ax.set_ylim(60, max(max(w_wpl), max(w_atl), 100) * 1.15)
     ax.grid(True, axis="y", alpha=0.3)
 
     ax = axes[1]
@@ -362,7 +376,7 @@ def plot_tso_yield_ratios() -> None:
     ax.set_ylabel("Yield ratio vs ENTSO-E (%)")
     ax.set_title("Solar PV vs public-grid feed-in")
     ax.legend(fontsize=8, loc="upper right")
-    ax.set_ylim(0, max(max(s_pv), max(s_atl), 100) * 1.08)
+    ax.set_ylim(60, max(max(s_pv), max(s_atl), 100) * 1.08)
     ax.grid(True, axis="y", alpha=0.3)
 
     fig.suptitle(
@@ -580,6 +594,7 @@ def plot_national_solar_duration_and_scatters() -> None:
     plt.close(fig)
 
     # Scatters (PNG)
+    from scipy.stats import linregress
     for scale, stem in (
         (None, "national_solar_scatter"),
         (FEED_IN_SCALE, "national_solar_scatter_scaled"),
@@ -594,8 +609,48 @@ def plot_national_solar_duration_and_scatters() -> None:
             a = a * scale
             note = f" ×{scale:g} (illustrative)"
         fig, ax = plt.subplots(figsize=(7.5, 7.0))
-        ax.scatter(e, p, s=6, alpha=0.12, color="C0", label="PVLib MaStR ×η_inv×aging" + note, rasterized=True)
-        ax.scatter(e, a, s=6, alpha=0.12, color="C2", label="Atlite CSi ×aging" + note, rasterized=True)
+        
+        if scale is None:
+            months = ent.loc[idx].index.month
+            color_map = {
+                12: "blue", 1: "blue", 2: "blue",
+                3: "green", 4: "green", 5: "green",
+                6: "orange", 7: "orange", 8: "orange",
+                9: "brown", 10: "brown", 11: "brown"
+            }
+            c_array = [color_map[m] for m in months]
+            
+            # Using marker shapes to differentiate models since colors indicate seasons
+            ax.scatter(e, p, c=c_array, s=6, alpha=0.12, marker="o", label="PVLib MaStR" + note, rasterized=True)
+            ax.scatter(e, a, c=c_array, s=6, alpha=0.12, marker="x", label="Atlite CSi" + note, rasterized=True)
+            
+            # Regression lines
+            valid_p = ~np.isnan(e) & ~np.isnan(p)
+            if valid_p.any():
+                res_p = linregress(e[valid_p], p[valid_p])
+                ax.plot(e[valid_p], res_p.intercept + res_p.slope * e[valid_p], color="black", ls="-", lw=1.5, label=f"PVLib fit: slope={res_p.slope:.2f}, R²={res_p.rvalue**2:.2f}")
+
+            valid_a = ~np.isnan(e) & ~np.isnan(a)
+            if valid_a.any():
+                res_a = linregress(e[valid_a], a[valid_a])
+                ax.plot(e[valid_a], res_a.intercept + res_a.slope * e[valid_a], color="gray", ls="--", lw=1.5, label=f"Atlite fit: slope={res_a.slope:.2f}, R²={res_a.rvalue**2:.2f}")
+
+            # Custom legend entries for seasons
+            from matplotlib.lines import Line2D
+            season_handles = [
+                Line2D([0], [0], marker='o', color='w', markerfacecolor='blue', markersize=6, label='DJF'),
+                Line2D([0], [0], marker='o', color='w', markerfacecolor='green', markersize=6, label='MAM'),
+                Line2D([0], [0], marker='o', color='w', markerfacecolor='orange', markersize=6, label='JJA'),
+                Line2D([0], [0], marker='o', color='w', markerfacecolor='brown', markersize=6, label='SON')
+            ]
+            handles, labels = ax.get_legend_handles_labels()
+            ax.legend(handles=handles + season_handles, loc="upper left", framealpha=0.95, fontsize=8)
+
+        else:
+            ax.scatter(e, p, s=6, alpha=0.12, color="C0", label="PVLib MaStR ×η_inv×aging" + note, rasterized=True)
+            ax.scatter(e, a, s=6, alpha=0.12, color="C2", label="Atlite CSi ×aging" + note, rasterized=True)
+            ax.legend(loc="upper left", framealpha=0.95, fontsize=8)
+
         lim = float(np.nanmax([e.max(), p.max(), a.max()]) * 1.02)
         ax.plot([0, lim], [0, lim], "k--", lw=1, label="y = x")
         ax.set_xlim(0, lim)
@@ -605,7 +660,6 @@ def plot_national_solar_duration_and_scatters() -> None:
         ax.set_title("Germany national solar 2023 — hourly scatter vs feed-in")
         ax.set_aspect("equal", adjustable="box")
         ax.grid(True, alpha=0.3)
-        ax.legend(loc="upper left", framealpha=0.95, fontsize=8)
         fig.tight_layout()
         save_raster_figure(fig, stem, dpi=150)
         plt.close(fig)
