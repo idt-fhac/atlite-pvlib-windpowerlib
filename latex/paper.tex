@@ -144,7 +144,7 @@ All tables recreate from that repository after a one-time extract/cutout prepare
 \subsection{Benchmarks}
 \begin{itemize}
     \item Campus Jülich PV: 216.96\,kWp, $25^\circ$/$165^\circ$, hourly AC from eview~\citep{eviewJuelich} (Europe/Berlin bucketed to UTC), 2023 --- instrumented single-plant anchor.
-    \item Kelmarsh wind farm (UK): 6$\times$2.05\,MW supervisory control and data acquisition (SCADA) data --- instrumented wind-farm anchor.
+    \item Kelmarsh wind farm (UK): 6$\times$2.05\,MW supervisory control and data acquisition (SCADA) data~\citep{KelmarshSCADA} --- instrumented wind-farm anchor.
     \item TSO-zone and Germany national ENTSO-E solar and onshore-wind feed-in, full year 2023.
 \end{itemize}
 
@@ -238,7 +238,7 @@ The practical lesson for modellers is that explicit, separately reported derates
 \subsection{Onshore Wind: Kelmarsh Wind Farm}
 \label{sec:kelmarsh}
 
-To establish a corresponding single-location anchor for wind conversion physics, we benchmark both conversion stacks against high-resolution supervisory control and data acquisition (SCADA) generation from the Kelmarsh wind farm (6$\times$Senvion MM92, 2.05\,MW each, UK).
+To establish a corresponding single-location anchor for wind conversion physics, we benchmark both conversion stacks against high-resolution supervisory control and data acquisition (SCADA) generation from the Kelmarsh wind farm (6$\times$Senvion MM92, 2.05\,MW each, UK; \url{https://zenodo.org/records/16807551})~\citep{KelmarshSCADA}.
 
 On the shared ERA5 100\,m wind velocity fields (extrapolated to each turbine hub using a consistent Hellman shear model), Windpowerlib yields 127.4\% of farm SCADA with a Pearson correlation of $r = 0.905$, while Atlite yields 130.8\% with $r = 0.902$.
 Once both libraries share identical meteorological inputs and vertical wind shear profiles, the gap between the two conversion libraries at plant level is only 3.4 percentage points.
@@ -556,7 +556,7 @@ The authors declare that they have no known competing financial interests or per
 
 \section*{Data availability}
 Analysis code, pinned environment files, offline cache mode, timing logs, and aggregated comparison tables are available at \url{https://github.com/idt-fhac/atlite-pvlib-windpowerlib}.
-Campus Jülich measured AC is publicly available via eview~\citep{eviewJuelich}; large ERA5 cutouts and Kelmarsh SCADA are available from the authors on reasonable request.
+Campus Jülich measured AC is publicly available via eview~\citep{eviewJuelich}; Kelmarsh wind farm SCADA data is open-access on Zenodo at \url{https://zenodo.org/records/16807551}~\citep{KelmarshSCADA}; and ERA5 weather cutouts are generated via ECMWF/Atlite and cached in the repository.
 
 \appendix
 \section{Campus Jülich PV: ablation, winter window, and hourly duration}
