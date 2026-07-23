@@ -3,6 +3,8 @@
 %% Numbered citations (elsarticle-num), as required by Renewable Energy.
 \documentclass[preprint,12pt,number]{elsarticle}
 
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 \usepackage{amssymb,amsmath}
 \usepackage{booktabs}
 \usepackage{tabularx}
@@ -34,21 +36,21 @@
 \cortext[cor1]{Corresponding author}
 
 \affiliation[idt]{organization={Institute of Data-Driven Technologies, FH Aachen University of Applied Sciences},
-            addressline={Heinrich-Mu{\ss}mann-Stra{\ss}e 1},
-            city={J{\"u}lich},
+            addressline={Heinrich-Mußmann-Straße 1},
+            city={Jülich},
             postcode={52428},
             country={Germany}}
 
 \affiliation[nowum]{organization={NOWUM-Energy Institute, FH Aachen University of Applied Sciences},
-            addressline={Heinrich-Mu{\ss}mann-Stra{\ss}e 1},
-            city={J{\"u}lich},
+            addressline={Heinrich-Mußmann-Straße 1},
+            city={Jülich},
             postcode={52428},
             country={Germany}}
 
 \begin{abstract}
 For German onshore wind in 2023, the choice of conversion library shifts simulated national energy by up to $14$ percentage points---but when the turbine type and hub height are held fixed, the gap between Atlite and Windpowerlib shrinks to about $2$ percentage points.
 We isolate this library-versus-fleet effect by running both stacks on a single shared ERA5 cutout across plant, wind-farm, transmission system operator (TSO) zone, and national scales.
-At Campus J{\"u}lich, after inverter efficiency ($0.90$) and linear module aging ($0.5\,\%$/y), PVLib+SAPM and Atlite agree to within $2\%$ annually and stay about $10$--$12\%$ above measured AC---an overestimate dominated by clear-sky peaks in the coarse reanalysis.
+At Campus Jülich, after inverter efficiency ($0.90$) and linear module aging ($0.5\,\%$/y), PVLib+SAPM and Atlite agree to within $2\%$ annually and stay about $10$--$12\%$ above measured AC---an overestimate dominated by clear-sky peaks in the coarse reanalysis.
 National solar simulations exceed ENTSO-E public-grid feed-in in every season ($\sim$161--185\% before fleet aging); literature behind-the-meter self-consumption ($8.2$\,TWh) closes roughly a quarter of the feed-in gap, leaving $\sim$23--25\,TWh unattributed.
 These results suggest that, for energy-system modelling, fleet assumptions matter more than the library for wind, while solar scoring against feed-in rather than generation is the dominant obstacle to validation.
 \end{abstract}
@@ -56,7 +58,7 @@ These results suggest that, for energy-system modelling, fleet assumptions matte
 \begin{highlights}
 \item Same-weather comparison: Atlite versus PVLib/Windpowerlib on one ERA5 cutout for Germany 2023.
 \item Fixing turbine type and hub height reduces the national wind library gap from 14\,pp to $\sim$2\,pp.
-\item At Campus J{\"u}lich, PV stacks agree within $\sim$2\% after inverter and aging; $\sim$10\% residual is ERA5 clear-sky bias.
+\item At Campus Jülich, PV stacks agree within $\sim$2\% after inverter and aging; $\sim$10\% residual is ERA5 clear-sky bias.
 \item National solar overshoots ENTSO-E feed-in by 60--85\%; behind-the-meter covers only $\sim$25\% of the gap.
 \item For modellers: calibrate the fleet first; fix the benchmark second.
 \end{highlights}
@@ -99,7 +101,7 @@ We run a multi-scale comparison of Atlite versus PVLib/Windpowerlib on one share
 Holding the weather product fixed means that any remaining difference is the library, the fleet assumptions, or the benchmark itself---not the reanalysis.
 Our contributions are:
 \begin{enumerate}
-    \item single-location validation anchors for both solar PV (Campus J{\"u}lich metered AC) and onshore wind (Kelmarsh SCADA data);
+    \item single-location validation anchors for both solar PV (Campus Jülich metered AC) and onshore wind (Kelmarsh SCADA data);
     \item national seasonal benchmarks against ENTSO-E grid feed-in for calendar year 2023;
     \item an in-depth diagnostic investigation of overshoots isolating \emph{why} (fleet representation vs.\ library physics; feed-in vs.\ generation boundary), \emph{when} (diurnal & seasonal timing), and \emph{where} (spatial TSO zone breakdown);
     \item actionable recommendations for energy-system modellers distinguishing primary calibration priorities from secondary side quests.
@@ -155,7 +157,7 @@ Before evaluating national fleet models against grid feed-in statistics, we firs
 \subsection{Solar PV: Campus Jülich}
 \label{sec:juelich}
 
-Campus J{\"u}lich is a 216.96\,kWp rooftop system---a single plant, not a fleet sample, but one where we have hourly metered AC and a known tilt and azimuth.
+Campus Jülich is a 216.96\,kWp rooftop system---a single plant, not a fleet sample, but one where we have hourly metered AC and a known tilt and azimuth.
 On the matched ERA5 cutout, PVLib and Atlite track each other closely (full-year Pearson correlation $r\approx0.996$ between libraries).
 After $\eta_{\mathrm{inv}}$ on PVLib and shared aging (mid-2011 commission prior, $\eta_{\mathrm{age}}=0.940$; unit not uniquely identified in MaStR), annual ratios versus measured AC are $111.9\%$ (PVLib+SAPM) and $109.8\%$ (Atlite), with Atlite slightly higher on correlation (Tables~\ref{tab_juelich}--\ref{tab_juelich_season}).
 Shifting the commission date by $\pm$2 years moves the ratios by about $\pm$1.2\,pp (range 110.7--113.1\% for PVLib+SAPM, 108.6--110.9\% for Atlite)---a non-trivial uncertainty, but not enough to close the $\sim$10\% residual.
@@ -399,8 +401,8 @@ Windpowerlib's site-specific MaStR fleet mapping avoids this under-prediction (1
 \centering
 \includegraphics[width=8.0cm]{data/tso_zone_map.pdf}
 \caption{%
-The four German TSO zones (50Hertz, Amprion, TenneT, TransnetBW) and the Campus J{\"u}lich validation site ($\star$).
-TenneT covers Schleswig-Holstein, much of Lower Saxony, and Bavaria; TransnetBW covers Baden-W{\"u}rttemberg.\label{fig_tso_map}
+The four German TSO zones (50Hertz, Amprion, TenneT, TransnetBW) and the Campus Jülich validation site ($\star$).
+TenneT covers Schleswig-Holstein, much of Lower Saxony, and Bavaria; TransnetBW covers Baden-Württemberg.\label{fig_tso_map}
 }
 \end{figure}
 
@@ -523,7 +525,7 @@ Several candidate loss factors and modeling tweaks turn out to be secondary ("si
 \label{sec:limitations}
 
 This study covers one meteorological year (Germany 2023) on a single shared ERA5 cutout, with only one instrumented German PV plant.
-The aging prior at J{\"u}lich is a documented estimate (mid-2011 commission, $\pm$2 years shifts annual ratios by $\pm$1.2\,pp); the exact MaStR unit is not uniquely identified.
+The aging prior at Jülich is a documented estimate (mid-2011 commission, $\pm$2 years shifts annual ratios by $\pm$1.2\,pp); the exact MaStR unit is not uniquely identified.
 On wind, park wakes, turbine availability, electrical losses, and ERA5 wind bias are not separated; onshore Redispatch ($\sim$3.4\% of ENTSO-E wind energy~\citep{SMARD2024Redispatch2023}) is known but small.
 TransnetBW at $82.1\%$ under Atlite V112@80\,m is the spatial outlier (Figure~\ref{fig_tso_yield}); hub mix, roughness, and complex terrain in the Black Forest and the Swabian Alb are plausible explanations, but we did not isolate the cause.
 
@@ -552,7 +554,7 @@ The authors declare that they have no known competing financial interests or per
 
 \section*{Data availability}
 Analysis code, pinned environment files, offline cache mode, timing logs, and aggregated comparison tables are available at \url{https://github.com/idt-fhac/atlite-pvlib-windpowerlib}.
-Campus J{\"u}lich measured AC is publicly available via eview~\citep{eviewJuelich}; large ERA5 cutouts and Kelmarsh SCADA are available from the authors on reasonable request.
+Campus Jülich measured AC is publicly available via eview~\citep{eviewJuelich}; large ERA5 cutouts and Kelmarsh SCADA are available from the authors on reasonable request.
 
 \appendix
 \section{Campus Jülich PV: ablation, winter window, and hourly duration}
