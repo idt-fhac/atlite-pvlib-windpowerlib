@@ -74,7 +74,7 @@ ERA5 \sep photovoltaics \sep wind power \sep Atlite \sep PVLib \sep Windpowerlib
 
 When two agent-based electricity market models produce different prices, is it because they disagree on bidding strategy---or because they started from different wind and solar time series?
 In earlier work we compared open market tools~\citep{Maurer2024KnowTools} and showed that spatial resolution of renewables and demand shifts market outcomes~\citep{Maurer2025Resolution}.
-Both studies take weather-to-power conversion as given, yet the two most common open-source routes---Atlite~\citep{Hofmann2021} on ERA5 reanalysis grids~\citep{Hersbach2020}, as used by PyPSA-Eur~\citep{PyPSAEur}, and plant-level libraries such as PVLib~\citep{pvlib2023,pvlib2023iotools} and Windpowerlib~\citep{windpowerlib}---can disagree on national annual energy by more than $10$ percentage points.
+Both studies take weather-to-power conversion as given, yet the two most common open-source routes---Atlite~\citep{Hofmann2021} on ERA5 reanalysis grids~\citep{Hersbach2020,ERA5CDS}, as used by PyPSA-Eur~\citep{PyPSAEur}, and plant-level libraries such as PVLib~\citep{pvlib2023,pvlib2023iotools} and Windpowerlib~\citep{windpowerlib}---can disagree on national annual energy by more than $10$ percentage points.
 The question is whether that gap comes from the physics inside each library or from the fleet assumptions wrapped around it.
 
 \subsection{Related work}
@@ -112,7 +112,7 @@ Our contributions are:
 \label{sec:methods}
 
 \subsection{Conversion Libraries and Shared ERA5 Cutout}
-Both stacks read the same approx.\ $0.25^\circ$ Atlite cutout for Germany (8760\,h of ERA5 fields)~\citep{Hofmann2021,Hersbach2020}.
+Both stacks read the same approx.\ $0.25^\circ$ Atlite cutout for Germany (8760\,h of ERA5 fields)~\citep{Hofmann2021,Hersbach2020,ERA5CDS}.
 Same weather means library and fleet choices are comparable; it does not mean either stack already includes wakes, curtailment, or other operational losses.
 \begin{itemize}
     \item \textbf{Atlite}: Wind converts ERA5 100\,m winds with a single representative machine (\texttt{Vestas\_V112\_3MW} at hub height 80\,m; PyPSA-Eur onshore default~\citep{PyPSAEur}) for all onshore capacity, with logarithmic down-extrapolation via cutout roughness.
