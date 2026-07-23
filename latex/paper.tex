@@ -103,7 +103,7 @@ Our contributions are:
 \begin{enumerate}
     \item single-location validation anchors for both solar PV (Campus Jülich metered AC) and onshore wind (Kelmarsh SCADA data);
     \item national seasonal benchmarks against ENTSO-E grid feed-in for calendar year 2023;
-    \item an in-depth diagnostic investigation of overshoots isolating \emph{why} (fleet representation vs.\ library physics; feed-in vs.\ generation boundary), \emph{when} (diurnal & seasonal timing), and \emph{where} (spatial TSO zone breakdown);
+    \item an in-depth diagnostic investigation of overshoots isolating \emph{why} (fleet representation vs.\ library physics; feed-in vs.\ generation boundary), \emph{when} (diurnal \& seasonal timing), and \emph{where} (spatial TSO zone breakdown);
     \item actionable recommendations for energy-system modellers distinguishing primary calibration priorities from secondary side quests.
 \end{enumerate}
 
@@ -308,19 +308,19 @@ Full year & 141.0\% & 127.7\% & 0.976 / 0.974 & 184.7\% & 162.5\% & 0.935 / 0.94
 \section{Investigation of Overshoots: Where, When, and Why}
 \label{sec:investigation}
 
-To explain the national-scale overshoots and the 13.3\,pp discrepancy between default wind stacks, we perform controlled experiments and multi-dimensional diagnostic breakdowns isolating *why* (physics vs.\ fleet representation & feed-in accounting boundaries), *when* (diurnal & seasonal timing), and *where* (spatial TSO zone breakdown).
+To explain the national-scale overshoots and the 13.3\,pp discrepancy between default wind stacks, we perform controlled experiments and multi-dimensional diagnostic breakdowns isolating \emph{why} (physics vs.\ fleet representation \& feed-in accounting boundaries), \emph{when} (diurnal \& seasonal timing), and \emph{where} (spatial TSO zone breakdown).
 
 \subsection{Onshore Wind Overshoot Investigation}
 \label{sec:wind_investigation}
 
-\paragraph{Why (Fleet Representation vs.\ Library Physics).}
+\paragraph{Why: Fleet Representation vs.\ Library Physics.}
 To test whether the 13.3\,pp gap between national Windpowerlib and Atlite runs stems from internal library code or from fleet representations, we conduct a controlled experiment.
 We force Windpowerlib to simulate the exact same turbine and hub height used by Atlite (Vestas V112/3000 at 80\,m) with identical logarithmic down-extrapolation from ERA5 100\,m winds.
 
-As shown in Figure~\ref{fig_wind_library} and Table~\ref{tab_wind_v112}, Windpowerlib V112@80\,m yields **129.3\%** of ENTSO-E, compared to Atlite V112@80\,m at **127.7\%**.
-Holding the turbine and hub height fixed **collapses the national library gap from 13.3\,pp to just 1.6\,pp** (ratio $\approx 101\%$, correlation $r \approx 1.00$).
+As shown in Figure~\ref{fig_wind_library} and Table~\ref{tab_wind_v112}, Windpowerlib V112@80\,m yields \textbf{129.3\%} of ENTSO-E, compared to Atlite V112@80\,m at \textbf{127.7\%}.
+Holding the turbine and hub height fixed \textbf{collapses the national library gap from 13.3\,pp to just 1.6\,pp} (ratio $\approx 101\%$, correlation $r \approx 1.00$).
 The tiny 1.6\,pp residual traces entirely to slight differences in power-curve interpolation tables between oedb and Atlite.
-This proves that the national discrepancy is almost entirely a *fleet representation* difference (MaStR multi-hub fleet vs.\ single V112 proxy) rather than a library physics difference.
+This proves that the national discrepancy is almost entirely a \emph{fleet representation} difference (MaStR multi-hub fleet vs.\ single V112 proxy) rather than a library physics difference.
 
 \begin{figure}[htbp]
 \centering
@@ -367,7 +367,7 @@ Availability, electrical, wakes, ERA5 bias, other & residual & Not separately id
 \end{tabularx}
 \end{table}
 
-\paragraph{When (Diurnal Day vs.\ Night Split).}
+\paragraph{When: Diurnal Day vs.\ Night Split.}
 To test whether atmospheric stability or diurnal shear errors drive the free-stream wind overshoot, we split full-year data into Day (06:00--17:00 UTC) and Night (18:00--05:00 UTC) subsets (Table~\ref{tab_wind_daynight}).
 For the MaStR fleet, overshoot is virtually identical day and night (140.2\% vs.\ 141.5\%); for Atlite V112@80\,m, day and night overshoots are similarly balanced (129.1\% vs.\ 126.3\%).
 The absence of a diurnal bias structure confirms that the overshoot is a flat, free-stream scaling issue (omitted wakes, availability, and reanalysis wind bias) rather than a diurnal shear model error.
@@ -391,9 +391,9 @@ Germany national & Night & 141.5 & 126.3 & 0.980 & 0.976\\
 \end{tabularx}
 \end{table}
 
-\paragraph{Where (Spatial TSO Zone Breakdown).}
+\paragraph{Where: Spatial TSO Zone Breakdown.}
 Disaggregating national wind into the four TSO control zones (Figure~\ref{fig_tso_map}, Figure~\ref{fig_tso_yield}, Table~\ref{tab_tso_fy}, Figure~\ref{fig_tso_week_wind}) reveals strong spatial consistency across 50Hertz, Amprion, and TenneT, but uncovers a notable spatial anomaly in TransnetBW.
-While Atlite V112@80\,m over-predicts in 50Hertz (124.5\%), Amprion (112.4\%), and TenneT (141.8\%), it **under-predicts in TransnetBW at 82.1\%** of ENTSO-E.
+While Atlite V112@80\,m over-predicts in 50Hertz (124.5\%), Amprion (112.4\%), and TenneT (141.8\%), it \textbf{under-predicts in TransnetBW at 82.1\%} of ENTSO-E.
 This spatial anomaly is driven by complex terrain: TransnetBW covers the Black Forest and Swabian Alb, where ERA5's coarse grid fails to resolve terrain wind channelling, and where a single 80\,m proxy turbine fails to represent the local high-hub fleet.
 Windpowerlib's site-specific MaStR fleet mapping avoids this under-prediction (117.7\%).
 
@@ -449,8 +449,8 @@ Windpowerlib uses the MaStR fleet; Atlite uses V112@80\,m.\label{fig_tso_week_wi
 \subsection{Solar PV Overshoot Investigation}
 \label{sec:solar_investigation}
 
-\paragraph{Why (Generation vs.\ Feed-in Boundary \& BTM Budget).}
-Scoring national solar simulations against ENTSO-E series introduces a fundamental boundary mismatch: ENTSO-E reports *public-grid feed-in*, not total AC generation~\citep{ENTSOEActualGeneration}.
+\paragraph{Why: Generation vs.\ Feed-in Boundary \& BTM Budget.}
+Scoring national solar simulations against ENTSO-E series introduces a fundamental boundary mismatch: ENTSO-E reports \emph{public-grid feed-in}, not total AC generation~\citep{ENTSOEActualGeneration}.
 Behind-the-meter (BTM) self-consumption is consumed locally before grid metering.
 Table~\ref{tab_residual_budget} and Figure~\ref{fig_solar_budget} compile a national solar residual budget after applying physics derates ($\eta_{\mathrm{inv}}\times\eta_{\mathrm{age}}$).
 Literature BTM self-consumption ($8.20$\,TWh~\citep{FraunhoferISE2025SelfConsumption}) accounts for roughly 25\% of the feed-in gap, leaving a $23.2\text{--}25.2$\,TWh unattributed residual dominated by grid curtailment, estimation platform methods, and timing of registry additions.
@@ -486,12 +486,12 @@ Unattributed residual & 25.2 & 23.2 & Open\\
 \end{tabularx}
 \end{table}
 
-\paragraph{When (Seasonal Timing).}
+\paragraph{When: Seasonal Timing.}
 The seasonal decomposition in Table~\ref{tab_national_season} and Appendix~\ref{app:national_derates} demonstrates that solar overshoot is present in all seasons (PVLib 168.6\% in summer, 262.2\% in winter).
 This confirms that the gap is a structural year-round generation-vs-feed-in offset rather than a winter snow or seasonal soiling phenomenon.
 
-\paragraph{Where (Spatial TSO Breakdown).}
-Spatial disaggregation across TSO zones (Table~\ref{tab_tso_fy}, Figure~\ref{fig_tso_yield}, Figure~\ref{fig_tso_week_solar}) reveals that **TenneT exhibits the highest solar overshoot** (PVLib 215.5\%, Atlite 187.0\%).
+\paragraph{Where: Spatial TSO Breakdown.}
+Spatial disaggregation across TSO zones (Table~\ref{tab_tso_fy}, Figure~\ref{fig_tso_yield}, Figure~\ref{fig_tso_week_solar}) reveals that \textbf{TenneT exhibits the highest solar overshoot} (PVLib 215.5\%, Atlite 187.0\%).
 This coincides with a MaStR-to-ENTSO-E capacity ratio of 117--121\% in TenneT, showing that registry inventory over-counting compounds the feed-in boundary gap in northern and southern Germany.
 
 \begin{figure}[htbp]
@@ -509,17 +509,19 @@ Both stacks overshoot peaks systematically; TenneT shows the largest absolute ga
 
 \subsection{Practical Recommendations for Energy Modellers}
 
-1. **Fix the Fleet Before Blaming the Library (Wind)**:
-   Our controlled matched experiment proves that a 13.3\,pp gap between Windpowerlib and Atlite collapses to 1.6\,pp once turbine catalogue and hub height are harmonized. Modellers choosing between conversion libraries should prioritize calibrating fleet asset representations (hub height distributions, turbine types) rather than tweaking internal power-curve interpolation code.
-2. **Account for the Benchmark Boundary (Solar)**:
-   Scoring raw simulated PV against ENTSO-E public feed-in compares total AC generation to grid feed-in. Modellers must explicitly account for behind-the-meter self-consumption ($\sim 13\%$ of generation in Germany) and avoid treating feed-in overshoot as simulation error alone.
+\begin{enumerate}
+    \item \textbf{Fix the Fleet Before Blaming the Library (Wind)}: Our controlled matched experiment proves that a 13.3\,pp gap between Windpowerlib and Atlite collapses to 1.6\,pp once turbine catalogue and hub height are harmonized. Modellers choosing between conversion libraries should prioritize calibrating fleet asset representations (hub height distributions, turbine types) rather than tweaking internal power-curve interpolation code.
+    \item \textbf{Account for the Benchmark Boundary (Solar)}: Scoring raw simulated PV against ENTSO-E public feed-in compares total AC generation to grid feed-in. Modellers must explicitly account for behind-the-meter self-consumption ($\sim 13\%$ of generation in Germany) and avoid treating feed-in overshoot as simulation error alone.
+\end{enumerate}
 
 \subsection{Side Quests: Lower-Impact Factors}
 
-Several candidate loss factors and modeling tweaks turn out to be secondary ("side quests"):
-* **Kimber Soiling Models**: Shifted annual PV yield by only $-0.3$\,pp at Jülich (Appendix~\ref{app:juelich}).
-* **Constant Energy-Matching Scalars**: Applying a flat $\times 0.62$ scalar aligns annual solar energy by construction but fails to recover daily duration curves or hourly scatter dynamics (Appendix~\ref{app:national_derates}).
-* **Turbine Cut-Out Rules & Centroid Aggregations**: Moving from NUTS3 centroids to plant coordinates or altering high-wind cut-out logic changed national wind totals by $<0.5$\,pp.
+Several candidate loss factors and modeling tweaks turn out to be secondary (``side quests''):
+\begin{itemize}
+    \item \textbf{Kimber Soiling Models}: Shifted annual PV yield by only $-0.3$\,pp at Jülich (Appendix~\ref{app:juelich}).
+    \item \textbf{Constant Energy-Matching Scalars}: Applying a flat $\times 0.62$ scalar aligns annual solar energy by construction but fails to recover daily duration curves or hourly scatter dynamics (Appendix~\ref{app:national_derates}).
+    \item \textbf{Turbine Cut-Out Rules \& Centroid Aggregations}: Moving from NUTS3 centroids to plant coordinates or altering high-wind cut-out logic changed national wind totals by $<0.5$\,pp.
+\end{itemize}
 
 \subsection{Limitations}
 \label{sec:limitations}
