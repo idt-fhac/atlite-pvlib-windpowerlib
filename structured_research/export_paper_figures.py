@@ -77,7 +77,10 @@ def plot_juelich_fortnight(
     gap = (a == 0) & ((pv > 5) | (atl > 5))
     a = a.mask(gap)
 
-    fig, ax = plt.subplots(figsize=(14, 5.2))
+    fig, (ax, ax_res) = plt.subplots(
+        2, 1, figsize=(14, 7.0), gridspec_kw={'height_ratios': [3, 1]}, sharex=True
+    )
+    
     ax.plot(w.index, a, color="black", lw=1.8, label="Actual (metered; gaps left blank)")
     ax.plot(
         w.index,
@@ -104,16 +107,26 @@ def plot_juelich_fortnight(
             zorder=0,
             label="Snow on modules",
         )
+    
     ax.set_xlim(pd.Timestamp(start), pd.Timestamp(end) + pd.Timedelta(hours=23))
     ax.set_ylabel("Power (kW)")
     ax.set_title(title)
     ax.legend(loc="upper left", framealpha=0.95)
     ax.grid(True, alpha=0.3)
-    ax.xaxis.set_major_locator(DayLocator())
-    ax.xaxis.set_major_formatter(DateFormatter("%d %b"))
+    ax.tick_params(labelbottom=False)
+
+    ax_res.plot(w.index, pv - a, color="C0", lw=1.3, ls="--")
+    ax_res.plot(w.index, atl - a, color="C2", lw=1.3, ls="-.")
+    ax_res.axhline(0, color="black", lw=1)
+    ax_res.set_ylabel("Residual (kW)")
+    ax_res.grid(True, alpha=0.3)
+    
+    ax_res.xaxis.set_major_locator(DayLocator())
+    ax_res.xaxis.set_major_formatter(DateFormatter("%d %b"))
+    
     fig.autofmt_xdate(rotation=30, ha="right")
     fig.tight_layout()
-    save_vector_figure(fig, stem)
+    save_vector_figure(fig, stem, also_png=True)
     plt.close(fig)
 
 

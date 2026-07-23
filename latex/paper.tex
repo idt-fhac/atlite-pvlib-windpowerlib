@@ -154,7 +154,8 @@ All tables recreate from that repository after a one-time extract/cutout prepare
 
 Campus J{\"u}lich is a 216.96\,kWp rooftop system---a single plant, not a fleet sample, but one where we have hourly metered AC and a known tilt and azimuth.
 On the matched ERA5 cutout, PVLib and Atlite track each other closely (full-year Pearson correlation $r\approx0.996$ between libraries).
-After $\eta_{\mathrm{inv}}$ on PVLib and shared aging (mid-2011 commission prior; unit not uniquely identified in MaStR), annual ratios versus measured AC are $111.9\%$ (PVLib+SAPM) and $109.8\%$ (Atlite), with Atlite slightly higher on correlation (Tables~\ref{tab_juelich}--\ref{tab_juelich_season}).
+After $\eta_{\mathrm{inv}}$ on PVLib and shared aging (mid-2011 commission prior, $\eta_{\mathrm{age}}=0.940$; unit not uniquely identified in MaStR), annual ratios versus measured AC are $111.9\%$ (PVLib+SAPM) and $109.8\%$ (Atlite), with Atlite slightly higher on correlation (Tables~\ref{tab_juelich}--\ref{tab_juelich_season}).
+Shifting the commission date by $\pm$2 years moves the ratios by about $\pm$1.2\,pp (range 110.7--113.1\% for PVLib+SAPM, 108.6--110.9\% for Atlite)---a non-trivial uncertainty, but not enough to close the $\sim$10\% residual.
 Full-year sums fill meter gaps as zeros, which inflate $r$ and shrink the mean absolute error and root-mean-square error (MAE/RMSE) relative to daytime-overlap hours (Appendix~\ref{app:juelich}).
 The remaining $\sim$10\% overestimate versus the meter arises mostly from hours when ERA5 overestimates clear-sky irradiance, plus the 19~January~2023 snow event that no reanalysis-driven model can capture, and from gap-fill zeros.
 
@@ -164,7 +165,7 @@ Appendix~\ref{app:juelich} adds the January snow window, factor ablation, error-
 \begin{table}[htbp]
 \caption{%
 Campus Jülich PV versus measured AC, full year 2023 (single site).
-Both libraries use the same ERA5 cutout; PVLib includes $\eta_{\mathrm{inv}}=0.90$ and both include aging $\eta_{\mathrm{age}}=0.940$ (commission prior).
+Both libraries use the same ERA5 cutout; PVLib includes $\eta_{\mathrm{inv}}=0.90$ and both include aging $\eta_{\mathrm{age}}=0.940$ (mid-2011 commission prior; $\pm$2\,y shifts ratios by $\pm$1.2\,pp).
 Gaps filled as zero.\label{tab_juelich}
 }
 
@@ -200,7 +201,7 @@ Full year & 111.9\% & 0.918 & 109.8\% & 0.921\\
 \includegraphics[width=14.0cm]{data/juelich_june_2weeks.pdf}
 \caption{%
 Campus Jülich PV, 5--18 June 2023: measured AC versus PVLib and Atlite on the same ERA5 cutout (inverter/aging derates).
-Residual bias concentrates on clear peaks.\label{fig_juelich_june}
+Lower panel: hourly residual (sim$-$measured); positive spikes on clear days reveal where ERA5 irradiance overshoots the meter.\label{fig_juelich_june}
 }
 
 \end{figure}
@@ -516,11 +517,17 @@ TenneT's outsized ratio ($\sim$187--216\% of feed-in) coincides with the highest
 For modellers, the takeaway is that scoring raw simulated PV against ENTSO-E feed-in is a comparison of two different quantities.
 Until a public German generation time series (including BTM) is available, the apparent overshoot should not be interpreted as a converter error alone.
 
+An important experiment we did not run for solar is the fleet-isolation test that proved decisive for wind.
+The V112@80\,m wind test held turbine and hub fixed across both libraries, collapsing a 14\,pp gap to $\sim$2\,pp.
+An analogous solar test would force both PVLib and Atlite onto the same module type, tilt/azimuth distribution, and capacity-weighted fleet age---stripping away everything except the irradiance decomposition and cell-temperature model.
+At J{\"u}lich (one plant, one orientation), the two libraries already agree within $\sim$2\%; a matched national solar run would reveal whether that agreement holds across a heterogeneous fleet.
+We leave this as a priority for follow-up work.
+
 \subsection{Limitations}
 \label{sec:limitations}
 
 This study covers one meteorological year (Germany 2023) on a single shared ERA5 cutout, with only one instrumented German PV plant.
-The aging prior at J{\"u}lich is a documented estimate (mid-2011 commission, $\pm$2 years would shift the derate by $\pm$1 pp); the exact MaStR unit is not uniquely identified.
+The aging prior at J{\"u}lich is a documented estimate (mid-2011 commission, $\pm$2 years shifts annual ratios by $\pm$1.2\,pp); the exact MaStR unit is not uniquely identified.
 On wind, park wakes, turbine availability, electrical losses, and ERA5 wind bias are not separated; onshore Redispatch ($\sim$3.4\% of ENTSO-E wind energy~\citep{SMARD2024Redispatch2023}) is known but small.
 The Kimber soiling check at J{\"u}lich uses a California rural prior on ERA5 precipitation and is not a calibrated national derate.
 TransnetBW at $82.1\%$ under Atlite V112@80\,m is the spatial outlier (Figure~\ref{fig_tso_yield}); hub mix, roughness, and complex terrain in the Black Forest and the Swabian Alb are plausible explanations, but we did not isolate the cause.
