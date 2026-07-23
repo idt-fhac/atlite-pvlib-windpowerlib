@@ -250,7 +250,7 @@ This confirms that at single-site scale, both libraries track metered generation
 \section{National-Scale Benchmarks Against Grid Feed-in}
 \label{sec:national}
 
-Having verified that both conversion stacks track metered generation accurately at single sites, we now scale up to national calendar-year 2023 simulations for Germany and benchmark raw, free-stream simulations against ENTSO-E public-grid feed-in.
+Having verified that both conversion stacks track metered generation accurately at single sites, we now scale up to national calendar-year 2023 simulations for Germany and benchmark raw, free-stream simulations against ENTSO-E public-grid feed-in (Figure~\ref{fig_tso_map} shows the spatial distribution of onshore wind and solar PV capacity across German NUTS3 districts).
 
 \subsection{National Onshore Wind Baseline}
 \label{sec:national_wind}
@@ -399,10 +399,10 @@ Windpowerlib's site-specific MaStR fleet mapping avoids this under-prediction (1
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=8.0cm]{data/tso_zone_map.pdf}
+\includegraphics[width=13.5cm]{data/capacity_density_map.pdf}
 \caption{%
-The four German TSO zones (50Hertz, Amprion, TenneT, TransnetBW) and the Campus Jülich validation site ($\star$).
-TenneT covers Schleswig-Holstein, much of Lower Saxony, and Bavaria; TransnetBW covers Baden-Württemberg.\label{fig_tso_map}
+Spatial distribution of German renewable capacity (MaStR 2023) across NUTS3 districts for onshore wind (left, $59.5$\,GW total) and solar PV (right, $83.0$\,GW total).
+The Campus Jülich single-plant validation site ($\star$) is marked in western Germany.\label{fig_tso_map}
 }
 \end{figure}
 
